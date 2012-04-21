@@ -81,7 +81,7 @@ final case class Vec3(var x: Double = 0.0, var y: Double = 0.0, var z: Double = 
   def normalizeLocal() {
     val len = math.sqrt(x*x + y*y + z*z)
     if (len == 0) {
-      x = 0
+      x = 1
       y = 0
       z = 0
     }
@@ -102,7 +102,9 @@ final case class Vec3(var x: Double = 0.0, var y: Double = 0.0, var z: Double = 
   @inline
   def angleBetween(other: Vec3): Double = {
     val dotProd = dot(other)
-    math.acos(dotProd / (length * other.length))
+    val divisor: Double = length * other.length
+    if (divisor == 0) 0
+    else math.acos(dotProd / divisor)
   }
 
   @inline
