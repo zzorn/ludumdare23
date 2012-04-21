@@ -35,6 +35,8 @@ public class Game extends GameBase {
      */
     @Override
     public void init() {
+
+
         PlayerShip player = new PlayerShip(planet, this.pictureStore().get("images/playership.png"));
         gameMap=new GameMap(new TrackingCamera(player,10, 10));
         addFacet(gameMap);
@@ -45,6 +47,7 @@ public class Game extends GameBase {
 
 
         inputHandler().addListener(player);
+
         gameMap.add(player);
 
         // Show inputs

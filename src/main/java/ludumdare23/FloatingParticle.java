@@ -43,8 +43,10 @@ public class FloatingParticle extends Entity3D {
     public void update(double durationSeconds) {
         double surfaceDist = planet.getSurfaceDist(pos(), rad_m);
 
-        if (velocity().length()< 1 && surfaceDist<=1){
+        if (velocity().length()< 5 && surfaceDist<=10){
             onSurface=true;
+
+
             velocity().zero();
             acc.zero();
         }
@@ -101,19 +103,29 @@ public class FloatingParticle extends Entity3D {
                    v.setMul(velocity().length() * Math.cos(angle) * -2);
                    velocity().setPlus(v);
                    velocity().setMul(0.8);
+                   if (velocity().length()<5) onSurface=true;
+
             }
 
             prevSurfaceDist = surfaceDist;
 
 
         }
+
+        if (onSurface==true) {
+
+
+            Vec3 normal=planet.normalAt(pos());
+            normal.setMul(surfaceDist);
+            pos().setMinus(normal);
+        }
     }
 
         @Override
         public void draw(Graphics2D g, int screenW, int screenH, int x, int y) {
             int r= (int) rad_m ;
-            //if (onSurface==true && color != Color.BLACK )g.setColor(Color.RED);
-            //else
+            if (onSurface==true && color != Color.BLACK )g.setColor(Color.RED);
+            else
             g.setColor(color);
             g.fillOval(x-r,y-r,2*r,2*r);
 
