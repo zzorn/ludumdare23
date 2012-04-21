@@ -20,7 +20,7 @@ public class Game extends GameBase {
     private Planet planet=new Planet();
 
     public Game() {
-        super("planeettapeli", 300, 800, 600, "");
+        super("planeettapeli", 300, 1200, 1000, "");
 
     }
 

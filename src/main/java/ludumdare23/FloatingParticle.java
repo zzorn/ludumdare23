@@ -22,6 +22,8 @@ public class FloatingParticle implements Entity {
     private Vec3 airResVec=new Vec3 (0,0,0);
     private double mass_kg=1;
     private final Planet planet;
+    private double rad_m=25;
+    private boolean prevInside=false;
 
     public double getMass_kg() {
         return mass_kg;
@@ -29,8 +31,8 @@ public class FloatingParticle implements Entity {
 
     public FloatingParticle(Planet planet){
         this.planet = planet;
-        pos.set(100,100,0);
-        velocity.set(10, -20,0);
+        pos.set((2*planet.getRadius_m()),0,0 );
+        velocity.set(0, 170,0);
 
     }
 
@@ -50,6 +52,9 @@ public class FloatingParticle implements Entity {
         acc.setMinus(this.pos);
         double distance=acc.length();
         double a=((6.67E-11*planet.getMass_kg())/(distance*distance));
+        if (distance<planet.getRadius_m()){
+            a=((6.67E-11*distance)/(planet.getRadius_m()*planet.getRadius_m()));
+        }
         double airRes=(-1.0/(distance*distance));
         acc.normalizeLocal();
         acc.setMul(a);
@@ -58,12 +63,22 @@ public class FloatingParticle implements Entity {
         acc.setPlus(airResVec);
         velocity.$plus$times$eq(acc, durationSeconds);
         pos.$plus$times$eq(velocity,durationSeconds);
+        boolean inside = planet.isInside()
+
+        if (inside && prevInside==false ){
+            velocity.setMul(-1);
+        }
+
+        prevInside=inside;
+
+
     }
 
     @Override
     public void draw(Graphics2D g, int screenW, int screenH, int x, int y) {
+        int r= (int) rad_m ;
         g.setColor(Color.BLUE);
-        g.fillRect(x,y,50,50);
+        g.fillOval(x-r,y-r,2*r,2*r);
 
 
     }
