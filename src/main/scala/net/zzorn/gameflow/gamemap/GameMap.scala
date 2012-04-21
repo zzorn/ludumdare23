@@ -6,6 +6,7 @@ import scala.collection.JavaConversions._
 import java.util.{List, Collections, ArrayList}
 import net.zzorn.utils.{Vec2, Vec3}
 import java.awt.{Color, Graphics2D}
+import net.zzorn.gameflow.camera.Camera
 
 /**
  * Basic game map class.
@@ -39,11 +40,6 @@ class GameMap(var camera: Camera = new StationaryCamera()) {
     _entities.remove(entity)
   }
 
-  def worldPosToScreenPos(worldPos: Vec3, screenPosOut: Vec2) {
-    screenPos.x = worldPos.x
-    screenPos.y = worldPos.y
-  }
-
   protected def updateMap(seconds: Double) {}
 
   protected def onEntityAdded(entity: Entity) {}
@@ -53,15 +49,12 @@ class GameMap(var camera: Camera = new StationaryCamera()) {
   protected def drawMap(g: Graphics2D, screenW: Int, screenH: Int, entities: java.util.List[Entity]) {
     drawMapBackground(g, screenW, screenH)
 
-    val cameraPos = camera.cameraPos
-
-    entities.foreach {e =>
-      worldPos.zero()
+    entities.foreach {entity =>
       screenPos.zero()
-      e.getPos(worldPos)
-      worldPos -= cameraPos
-      worldPosToScreenPos(worldPos, screenPos)
-      drawEntity(g, screenW, screenH, e, screenPos.x.toInt, screenPos.y.toInt)
+      worldPos.set(entity.pos)
+      camera.worldPosToScreenPos(worldPos, screenPos, screenW, screenH)
+
+      drawEntity(g, screenW, screenH, entity, screenPos.x.toInt, screenPos.y.toInt)
     }
   }
 

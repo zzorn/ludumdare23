@@ -63,6 +63,14 @@ final case class Vec3(var x: Double = 0.0, var y: Double = 0.0, var z: Double = 
   }
 
   @inline
+  def distance(other: Vec3): Double = {
+    val dx = x - other.x
+    val dy = y - other.y
+    val dz = z - other.z
+    math.sqrt(dx*dx + dy*dy + dz*dz)
+  }
+
+  @inline
   def normalize: Vec3 = {
     val len = length
     if (len == 0) Vec3(0,0,0)

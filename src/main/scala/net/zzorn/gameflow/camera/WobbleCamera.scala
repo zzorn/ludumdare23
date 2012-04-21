@@ -1,7 +1,5 @@
-package net.zzorn.gameflow.gamemap.camera
+package net.zzorn.gameflow.camera
 
-import net.zzorn.gameflow.gamemap.Camera
-import net.zzorn.gameflow.examples.movement.CubeExample._
 import net.zzorn.utils.{SimplexNoise, Vec3}
 
 /**
@@ -17,9 +15,7 @@ class WobbleCamera(val focusOffset: Vec3 = Vec3(),
   private var elapsedSeconds = 0.0
   private val wobbleOffset = Vec3.random() * 100
 
-  var cameraPos = Vec3()
-
-  def update(seconds: Double) {
+  override def update(seconds: Double) {
     // Start from the original camera if available, otherwise origo
     if (originalCamera != null) {
       originalCamera.update(seconds)

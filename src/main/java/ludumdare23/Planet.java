@@ -1,6 +1,7 @@
 package ludumdare23;
 
 import net.zzorn.gameflow.entity.Entity;
+import net.zzorn.gameflow.entity.Entity3D;
 import net.zzorn.utils.Vec3;
 
 import java.awt.*;
@@ -12,18 +13,15 @@ import java.awt.*;
  * Time: 10:54
  * To change this template use File | Settings | File Templates.
  */
-public class Planet implements Entity {
+public class Planet extends Entity3D {
     private int width=100;
     private int height=100;
     private double mass_kg=1000000000000000.0;
+    private Vec3 pos = new Vec3(0,0,0);
+    private Vec3 velocity = new Vec3(0,0,0);
 
     public double getMass_kg() {
         return mass_kg;
-    }
-
-    @Override
-    public void getPos(Vec3 posOut) {
-        posOut.zero();
     }
 
     @Override
@@ -37,9 +35,4 @@ public class Planet implements Entity {
 
     }
 
-    @Override
-    public void getVelocity(Vec3 velocityOut) {
-       velocityOut.zero();
-
-    }
 }

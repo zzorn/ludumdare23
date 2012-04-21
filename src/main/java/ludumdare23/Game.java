@@ -1,8 +1,8 @@
 package ludumdare23;
 
 import net.zzorn.gameflow.GameBase;
+import net.zzorn.gameflow.camera.StationaryCamera;
 import net.zzorn.gameflow.gamemap.GameMap;
-import net.zzorn.gameflow.gamemap.camera.StationaryCamera;
 import net.zzorn.utils.Vec3;
 
 import java.awt.*;
@@ -20,7 +20,7 @@ public class Game extends GameBase {
     private Planet planet=new Planet();
 
     public Game() {
-        super("planeettapeli", 300, 800, 600, "");
+        super("LD23", 300, 400, 300, "");
 
     }
 
@@ -34,7 +34,7 @@ public class Game extends GameBase {
      */
     @Override
     public void init() {
-        gameMap=new GameMap(new StationaryCamera(new Vec3(-this.canvas().getWidth()/2,-this.canvas().getHeight()/2,0)));
+        gameMap=new GameMap(new StationaryCamera(new Vec3(0,0,0)));
         gameMap.add(new FloatingParticle(planet));
         gameMap.add(planet);
     }
