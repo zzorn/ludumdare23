@@ -2,9 +2,12 @@ package ludumdare23;
 
 import net.zzorn.gameflow.input.InputListener;
 import net.zzorn.gameflow.input.KeyHandler;
+import net.zzorn.gameflow.picture.Picture;
 import net.zzorn.utils.Vec3;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 
 /**
  * The ship controlled by the player.
@@ -24,13 +27,16 @@ public class PlayerShip extends Ship implements InputListener {
     private double shipSideThrust = 30;
     private final Planet planet;
     private double distance = 0;
-    private double angle = 0;
+    private double angle = 270;
     private final static double DEGREES_TO_RADIANS= 2*Math.PI/360;
     private double angVelosity=0;
     private double angAcc =0;
     private double angSlow = 0.9 ;
+    private final Picture image;
 
-    public PlayerShip(Planet planet) {
+
+    public PlayerShip(Planet planet, Picture image ) {
+        this.image = image;
         distance = planet.getRadius_m()+50;
         this.planet = planet;
         pos().setX(planet.pos().x());
@@ -84,5 +90,10 @@ public class PlayerShip extends Ship implements InputListener {
         }
 
 
+    }
+
+    @Override
+    public void draw(Graphics2D g, int screenW, int screenH, int x, int y) {
+        image.draw(g,x,y);
     }
 }
