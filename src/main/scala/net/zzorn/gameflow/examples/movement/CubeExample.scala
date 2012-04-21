@@ -5,8 +5,8 @@ import java.awt.{Graphics2D, Color}
 
 import net.zzorn.gameflow.GameBase
 import net.zzorn.utils.{Vec2, Vec3, ColorUtils}
-import net.zzorn.gameflow.gamemap.camera.WobbleCamera
 import net.zzorn.gameflow.gamemap.GameMap
+import net.zzorn.gameflow.camera.WobbleCamera
 
 /**
  * Example of drawing and moving entity classes.
