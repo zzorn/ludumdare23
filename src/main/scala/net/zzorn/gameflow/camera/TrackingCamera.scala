@@ -1,8 +1,7 @@
-package net.zzorn.gameflow.gamemap.camera
+package net.zzorn.gameflow.camera
 
 import net.zzorn.gameflow.entity.Entity
 import net.zzorn.utils.{ParameterChecker, Vec2, Vec3}
-import net.zzorn.gameflow.gamemap.Camera
 
 /**
  * A camera that tracks a specified entity, focusing a bit ahead of it.
@@ -10,8 +9,6 @@ import net.zzorn.gameflow.gamemap.Camera
 class TrackingCamera(initialTrackedEntity: Entity,
                      var leadingAmount: Double = 10,
                      var trackingSpeed: Double = 10) extends Camera {
-
-  val cameraPos = Vec3()
 
   private var _trackedEntity: Entity = null
   private val targetPos = Vec3()
@@ -25,12 +22,13 @@ class TrackingCamera(initialTrackedEntity: Entity,
     ParameterChecker.requireNotNull(trackedEntity, 'trackedEntity)
 
     _trackedEntity = trackedEntity
-    trackedEntity.getPos(cameraPos)
+    cameraPos.set(trackedEntity.pos)
   }
 
-  def update(seconds: Double) {
-    _trackedEntity.getPos(targetPos)
-    _trackedEntity.getVelocity(targetVelocity)
+  override def update(seconds: Double) {
+    targetPos.set(_trackedEntity.pos)
+    targetVelocity.set(_trackedEntity.velocity)
+
     targetPos +*=(targetVelocity, leadingAmount)
     cameraPos.mixWith(targetPos, math.min(1.0, seconds * trackingSpeed))
   }

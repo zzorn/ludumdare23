@@ -1,12 +1,13 @@
 package net.zzorn.gameflow.entity
 
 import net.zzorn.utils.{Vec3}
+import java.awt.Graphics2D
 
 
 /**
  *
  */
-trait Entity3D extends Entity{
+class Entity3D extends Entity{
 
   val pos      = Vec3()
   val velocity = Vec3()
@@ -17,12 +18,6 @@ trait Entity3D extends Entity{
     pos      +*= (velocity, durationSeconds)
   }
 
-  def getPos(worldPosOut: Vec3) {
-    worldPosOut.set(pos)
+  def draw(g: Graphics2D, screenW: Int, screenH: Int, x: Int, y: Int) {
   }
-
-  def getVelocity(velocityOut: Vec3) {
-    velocityOut.set(velocity)
-  }
-
 }

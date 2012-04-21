@@ -4,7 +4,6 @@ import scala.math
 import java.awt.{Graphics2D, Color}
 
 import net.zzorn.gameflow.GameBase
-import net.zzorn.gameflow.entity.{Entity3D, Entity2D}
 import net.zzorn.utils.{Vec2, Vec3, ColorUtils}
 import net.zzorn.gameflow.gamemap.camera.WobbleCamera
 import net.zzorn.gameflow.gamemap.GameMap
@@ -14,7 +13,7 @@ import net.zzorn.gameflow.gamemap.GameMap
  */
 object CubeExample extends GameBase("Cube Example") {
 
-  val gravity = Vec2(0, 200)
+  val gravity = Vec3(0, 200,0)
   val fadeintime = 5.0
   val airresistance = 0.5
 

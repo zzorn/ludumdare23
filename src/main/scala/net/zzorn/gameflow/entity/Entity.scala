@@ -9,8 +9,8 @@ import net.zzorn.utils.{Vec3, Vec2}
  */
 trait Entity {
 
-  def getPos(posOut: Vec3)
-  def getVelocity(velocityOut: Vec3)
+  def pos: Vec3
+  def velocity: Vec3
 
   def update(durationSeconds: Double)
 
