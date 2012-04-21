@@ -15,6 +15,11 @@ import java.awt.*;
 public class Planet implements Entity {
     private int width=100;
     private int height=100;
+    private double mass_kg=1000000000000000.0;
+
+    public double getMass_kg() {
+        return mass_kg;
+    }
 
     @Override
     public void getPos(Vec3 posOut) {

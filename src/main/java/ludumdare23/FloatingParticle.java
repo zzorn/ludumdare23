@@ -16,13 +16,21 @@ import java.awt.*;
  * To change this template use File | Settings | File Templates.
  */
 public class FloatingParticle implements Entity {
-    private Vec2 pos=new Vec2(0,0);
-    private Vec2 velocity=new Vec2(0,0);
-    private Vec2 acc=new Vec2(0,2);
+    private Vec3 pos=new Vec3(0,0,0);
+    private Vec3 velocity=new Vec3(0,0,0);
+    private Vec3 acc=new Vec3(0,0,0);
+    private Vec3 airResVec=new Vec3 (0,0,0);
+    private double mass_kg=1;
+    private final Planet planet;
+
+    public double getMass_kg() {
+        return mass_kg;
+    }
 
     public FloatingParticle(Planet planet){
-        pos.set(100,100);
-        velocity.set(10,-20);
+        this.planet = planet;
+        pos.set(100,100,0);
+        velocity.set(10, -20,0);
 
     }
 
@@ -38,6 +46,16 @@ public class FloatingParticle implements Entity {
 
     @Override
     public void update(double durationSeconds) {
+        planet.getPos(acc);
+        acc.setMinus(this.pos);
+        double distance=acc.length();
+        double a=((6.67E-11*planet.getMass_kg())/(distance*distance));
+        double airRes=(-1.0/(distance*distance));
+        acc.normalizeLocal();
+        acc.setMul(a);
+        airResVec.set(velocity);
+        airResVec.setMul(airRes);
+        acc.setPlus(airResVec);
         velocity.$plus$times$eq(acc, durationSeconds);
         pos.$plus$times$eq(velocity,durationSeconds);
     }

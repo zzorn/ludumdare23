@@ -45,13 +45,6 @@ final case class Vec3(var x: Double = 0.0, var y: Double = 0.0, var z: Double = 
   }
 
   @inline
-  def set (other: Vec2) {
-    this.x = other.x
-    this.y = other.y
-    this.z = 0.0
-  }
-
-  @inline
   def mixWith(other: Vec3, amount: Double = 0.5) {
     val selfAmount = 1.0 - amount
     x = x * selfAmount + other.x * amount
@@ -89,6 +82,65 @@ final case class Vec3(var x: Double = 0.0, var y: Double = 0.0, var z: Double = 
       y /= len
       z /= len
     }
+  }
+  @inline
+  def setX(x: Double) {
+    this.x = x
+  }
+
+  @inline
+  def setY(y: Double) {
+    this.y = y
+  }
+
+  @inline
+  def setZ(z: Double) {
+    this.z = z
+  }
+
+  @inline
+  def setPlus (scalar: Double) {
+    += (scalar)
+  }
+
+  @inline
+  def setMinus (scalar: Double) {
+    -= (scalar)
+  }
+
+  @inline
+  def setMul (scalar: Double) {
+    *= (scalar)
+  }
+
+  @inline
+  def setDiv (scalar: Double) {
+    /= (scalar)
+  }
+
+  @inline
+  def setPlus (other: Vec3) {
+    += (other)
+  }
+
+  @inline
+  def setMinus (other: Vec3) {
+    -= (other)
+  }
+
+  @inline
+  def setMul (other: Vec3) {
+    *= (other)
+  }
+
+  @inline
+  def setDiv (other: Vec3) {
+    /= (other)
+  }
+
+  @inline
+  def setPlusMul (other: Vec3, scalar: Double) {
+    +*= (other, scalar)
   }
 
 
