@@ -1,7 +1,6 @@
 package net.zzorn.utils
 
 import java.util.Random
-import net.zzorn.utils.Vec3._
 
 object Vec2 {
 
@@ -85,6 +84,18 @@ final case class Vec2(var x: Double = 0.0, var y: Double = 0.0) {
       y /= len
     }
   }
+
+  @inline
+  def dot(other: Vec2): Double = {
+    x*other.x + y*other.y
+  }
+
+  @inline
+  def angleBetween(other: Vec2): Double = {
+    val dotProd = dot(other)
+    math.acos(dotProd / (length * other.length))
+  }
+
 
   @inline
   def setX(x: Double) {
