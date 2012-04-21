@@ -26,7 +26,7 @@ public class PlayerShip implements Entity, InputListener {
     private final static double DEGREES_TO_RADIANS= 2*Math.PI/360;
     private double angVelosity=0;
     private double angAcc =0;
-    private double angSlow = 0.9 ;
+    private double angSlow = 0.98 ;
     private final Picture image;
 
     private Vec3 myPos = new Vec3(0,0,0);
@@ -91,20 +91,20 @@ public class PlayerShip implements Entity, InputListener {
     @Override
     public void onKeysUpdated(InputHandler keyHandler, double durationSeconds) {
         angAcc=0;
-        angSlow=0.98;
+
 
         if (keyHandler.isPressed(rightKey)) {
-            angAcc += 20;
-            angSlow = 0.999;
+            angAcc += 70;
+
         }
         if (keyHandler.isPressed(leftKey))  {
-            angAcc += -20;
-            angSlow = 0.999;
+            angAcc += -70;
+
         }
     }
 
     @Override
     public void draw(Graphics2D g, int screenW, int screenH, int x, int y) {
-        image.draw(g,x,y);
+        image.draw(g,x-image.w()/2,y-image.h()/2);
     }
 }
