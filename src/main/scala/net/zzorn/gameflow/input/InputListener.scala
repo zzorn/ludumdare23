@@ -7,20 +7,33 @@ trait InputListener {
 
   /**
    * Called when a key is pressed down.
-   * @param keyCode one of the VK_ codes in KeyEvent
    */
-  def onKeyPressed(keyCode: Int, keyHandler: KeyHandler, durationSeconds: Double) {}
+  def onKeyPressed(event: KeyPressed, keyHandler: InputHandler, durationSeconds: Double) {}
 
   /**
    * Called when a key is released.
-   * @param keyCode one of the VK_ codes in KeyEvent
    */
-  def onKeyReleased(keyCode: Int, keyHandler: KeyHandler, durationSeconds: Double) {}
+  def onKeyReleased(event: KeyReleased, keyHandler: InputHandler, durationSeconds: Double) {}
+
+  /**
+   * Called when the mouse is moved
+   */
+  def onMouseMoved(event: MouseMoved, keyHandler: InputHandler, durationSeconds: Double) {}
+
+  /**
+   * Called when a mouse button is pressed.
+   */
+  def onMouseButtonPressed(event: MousePressed, keyHandler: InputHandler, durationSeconds: Double) {}
+
+  /**
+   * Called when a mouse button is released.
+   */
+  def onMouseButtonReleased(event: MouseReleased, keyHandler: InputHandler, durationSeconds: Double) {}
 
   /**
    * Called when some key has been pressed or released.
    * @param keyHandler the handler that keeps track of pressed keys.
    */
-  def onKeysUpdated(keyHandler: KeyHandler, durationSeconds: Double) {}
+  def onKeysUpdated(keyHandler: InputHandler, durationSeconds: Double) {}
 
 }

@@ -1,7 +1,7 @@
 package ludumdare23;
 
+import net.zzorn.gameflow.input.InputHandler;
 import net.zzorn.gameflow.input.InputListener;
-import net.zzorn.gameflow.input.KeyHandler;
 import net.zzorn.utils.Vec3;
 
 import java.awt.event.KeyEvent;
@@ -24,13 +24,13 @@ public class PlayerShip extends Ship implements InputListener {
     private double shipSideThrust = 30;
 
     @Override
-    public void onKeyPressed(int keyCode, KeyHandler keyHandler, double durationSeconds) {}
+    public void onKeyPressed(int keyCode, InputHandler keyHandler, double durationSeconds) {}
 
     @Override
-    public void onKeyReleased(int keyCode, KeyHandler keyHandler, double durationSeconds) {}
+    public void onKeyReleased(int keyCode, InputHandler keyHandler, double durationSeconds) {}
 
     @Override
-    public void onKeysUpdated(KeyHandler keyHandler, double durationSeconds) {
+    public void onKeysUpdated(InputHandler keyHandler, double durationSeconds) {
         thrust().zero();
 
         if (keyHandler.isPressed(upKey))    thrust().setPlusMul(forwardVector,  shipForwardThrust);
