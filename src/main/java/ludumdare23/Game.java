@@ -41,7 +41,7 @@ public class Game extends GameBase {
         gameMap.add(new FloatingParticle(planet, new Vec3(planet.getRadius_m()+550,0,0) , 20 ,new Vec3(-100, 20,0 ),100,Color.YELLOW));
         gameMap.add(planet);
 
-        PlayerShip player = new PlayerShip();
+        PlayerShip player = new PlayerShip(planet);
         keyHandler().addListener(player);
         gameMap.add(player);
     }
