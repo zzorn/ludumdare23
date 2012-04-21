@@ -15,17 +15,17 @@ import java.awt.*;
  * To change this template use File | Settings | File Templates.
  */
 public class Planet extends Entity3D {
-    private int width=100;
-    private int height=100;
-    private double mass_kg=100000000000000000.0;
-    private Vec3 pos = new Vec3(0,0,0);
-    private Vec3 velocity = new Vec3(0,0,0);
+    private int width = 100;
+    private int height = 100;
+    private double mass_kg = 100000000000000000.0;
+    private Vec3 pos = new Vec3(0, 0, 0);
+    private Vec3 velocity = new Vec3(0, 0, 0);
 
     public double getRadius_m() {
         return radius_m;
     }
 
-    private double radius_m=100;
+    private double radius_m = 200;
 
 
     public double getMass_kg() {
@@ -34,9 +34,9 @@ public class Planet extends Entity3D {
 
     @Override
     public void draw(Graphics2D g, int screenW, int screenH, int x, int y) {
-       g.setColor(Color.GREEN);
-       int r= (int) radius_m ;
-       g.fillOval(x-r,y-r, 2*r, 2*r);
+        g.setColor(Color.GREEN);
+        int r = (int) radius_m;
+        g.fillOval(x - r, y - r, 2 * r, 2 * r);
     }
 
     @Override
@@ -45,11 +45,20 @@ public class Planet extends Entity3D {
     }
 
 
-    public boolean isInside(Vec3 point, double radius){
-      double midDist= point.distance(pos());
-      double distance= midDist-radius_m-radius;
-        return (distance<=0 );
+    public double getSurfaceDist (Vec3 point, double radius) {
+        double midDist = point.distance(pos());
+        double distance = midDist - radius_m - radius;
+        return (distance);
+    }
 
 
+
+
+    public Vec3 normalAt(Vec3 point) {
+        Vec3 normal = new Vec3(0, 0, 0);
+        normal.set(point);
+        normal.setMinus(pos());
+        normal.normalizeLocal();
+        return normal;
     }
 }

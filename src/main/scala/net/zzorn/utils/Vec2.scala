@@ -76,7 +76,7 @@ final case class Vec2(var x: Double = 0.0, var y: Double = 0.0) {
   def normalizeLocal() {
     val len = math.sqrt(x*x + y*y)
     if (len == 0) {
-      x = 0
+      x = 1
       y = 0
     }
     else {
@@ -93,7 +93,9 @@ final case class Vec2(var x: Double = 0.0, var y: Double = 0.0) {
   @inline
   def angleBetween(other: Vec2): Double = {
     val dotProd = dot(other)
-    math.acos(dotProd / (length * other.length))
+    val divisor: Double = length * other.length
+    if (divisor == 0) 0
+    else math.acos(dotProd / divisor)
   }
 
 
