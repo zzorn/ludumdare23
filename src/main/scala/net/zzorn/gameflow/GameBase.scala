@@ -1,6 +1,6 @@
 package net.zzorn.gameflow
 
-import input.KeyHandler
+import input.InputHandler
 import net.zzorn.utils._
 import picture.PictureManager
 import java.awt.{Graphics2D, Color}
@@ -28,7 +28,7 @@ class GameBase(title: String = "GameFlow",
   final private var _currentFps: Double = 0.0
   final private var _targetFps: Double = 0.0
   final private val _pictureStore: PictureManager = new PictureManager(picturePath)
-  final private val _keyHandler: KeyHandler = new KeyHandler()
+  final private val _inputHandler: InputHandler = new InputHandler()
 
   private final val facetManager: FacetManager = new FacetManager()
 
@@ -50,7 +50,7 @@ class GameBase(title: String = "GameFlow",
   }
 
   final def pictureStore: PictureManager = _pictureStore
-  final def keyHandler: KeyHandler = _keyHandler
+  final def keyHandler: InputHandler = _inputHandler
   final def canvas: GameCanvas = _canvas
   final def frame: SimpleFrame = _frame
   final def currentFps: Double = _currentFps
@@ -74,7 +74,7 @@ class GameBase(title: String = "GameFlow",
       createScreen()
 
       // Setup keyboard input
-      addFacet(_keyHandler)
+      addFacet(_inputHandler)
 
       facetManager.init()
       init()
@@ -139,7 +139,10 @@ class GameBase(title: String = "GameFlow",
     _canvas = new GameCanvas()
     _frame = new SimpleFrame(title, _canvas, defaultWidth, defaultHeight)
     _canvas.setup()
-    _canvas.addKeyListener(_keyHandler)
+    _canvas.addKeyListener(_inputHandler)
+    _canvas.addMouseListener(_inputHandler)
+    _canvas.addMouseMotionListener(_inputHandler)
+    _canvas.requestFocus()
   }
 
 

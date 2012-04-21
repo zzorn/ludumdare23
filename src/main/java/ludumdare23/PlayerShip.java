@@ -1,8 +1,8 @@
 package ludumdare23;
 
 import net.zzorn.gameflow.input.InputListener;
-import net.zzorn.gameflow.input.KeyHandler;
 import net.zzorn.gameflow.picture.Picture;
+import net.zzorn.gameflow.input.*;
 import net.zzorn.utils.Vec3;
 
 import java.awt.*;
@@ -66,14 +66,23 @@ public class PlayerShip extends Ship implements InputListener {
         pos().setY(distance*Math.sin(angle*DEGREES_TO_RADIANS));
     }
 
-    @Override
-    public void onKeyPressed(int keyCode, KeyHandler keyHandler, double durationSeconds) {}
+    public void onKeyPressed(KeyPressed event, InputHandler keyHandler, double durationSeconds) {
+    }
+
+    public void onKeyReleased(KeyReleased event, InputHandler keyHandler, double durationSeconds) {
+    }
+
+    public void onMouseMoved(MouseMoved event, InputHandler keyHandler, double durationSeconds) {
+    }
+
+    public void onMouseButtonPressed(MousePressed event, InputHandler keyHandler, double durationSeconds) {
+    }
+
+    public void onMouseButtonReleased(MouseReleased event, InputHandler keyHandler, double durationSeconds) {
+    }
 
     @Override
-    public void onKeyReleased(int keyCode, KeyHandler keyHandler, double durationSeconds) {}
-
-    @Override
-    public void onKeysUpdated(KeyHandler keyHandler, double durationSeconds) {
+    public void onKeysUpdated(InputHandler keyHandler, double durationSeconds) {
         thrust().zero();
         angAcc=0;
         angSlow=0.99;
