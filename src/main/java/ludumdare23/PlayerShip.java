@@ -1,19 +1,17 @@
 package ludumdare23;
 
 import net.zzorn.gameflow.entity.Entity;
-import net.zzorn.gameflow.input.InputListener;
 import net.zzorn.gameflow.picture.Picture;
 import net.zzorn.gameflow.input.*;
 import net.zzorn.utils.Vec3;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 
 /**
  * The ship controlled by the player.
  */
-public class PlayerShip implements Entity, InputListener {
+public class PlayerShip extends InputListenerAdapter implements Entity {
 
     private int upKey    = KeyEvent.VK_UP;
     private int downKey  = KeyEvent.VK_DOWN;
@@ -73,31 +71,16 @@ public class PlayerShip implements Entity, InputListener {
         pos().setY(distance * Math.sin(angle * DEGREES_TO_RADIANS));
     }
 
-    public void onKeyPressed(KeyPressed event, InputHandler keyHandler, double durationSeconds) {
-    }
 
-    public void onKeyReleased(KeyReleased event, InputHandler keyHandler, double durationSeconds) {
-    }
-
-    public void onMouseMoved(MouseMoved event, InputHandler keyHandler, double durationSeconds) {
-    }
-
-    public void onMouseButtonPressed(MousePressed event, InputHandler keyHandler, double durationSeconds) {
-    }
-
-    public void onMouseButtonReleased(MouseReleased event, InputHandler keyHandler, double durationSeconds) {
-    }
-
-    @Override
-    public void onKeysUpdated(InputHandler keyHandler, double durationSeconds) {
+    public void onKeysUpdated(InputStatus inputStatus, double durationSeconds) {
         angAcc=0;
         angSlow=0.98;
 
-        if (keyHandler.isPressed(rightKey)) {
+        if (inputStatus.isKeyHeld(rightKey)) {
             angAcc += 20;
             angSlow = 0.999;
         }
-        if (keyHandler.isPressed(leftKey))  {
+        if (inputStatus.isKeyHeld(leftKey))  {
             angAcc += -20;
             angSlow = 0.999;
         }

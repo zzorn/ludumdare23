@@ -1,80 +1,103 @@
 package net.zzorn.gameflow.input
 
-import java.util.{ArrayList, HashSet, HashMap}
 import scala.collection.JavaConversions._
 import java.awt.Graphics2D
 import net.zzorn.gameflow.{BaseFacet, Facet, Updating}
 import java.awt.event._
-import net.zzorn.gameflow.input.InputListener
+import java.util.{HashSet, ArrayList, HashMap}
 
 
 /**
  *
  */
-class InputHandler extends BaseFacet with KeyListener with MouseListener with MouseMotionListener {
+class InputHandler extends BaseFacet with KeyListener with MouseListener with MouseMotionListener with InputStatus {
 
-  private val pressedKeys = new HashSet[Int]()
-  private val pressedMouseButtons = new HashSet[MouseButton]()
-  private var listeners: List[InputListener] = Nil
-  private val queuedEvents: ArrayList[InputEvent] = new ArrayList[InputEvent](100)
-  private val recentEvents: ArrayList[InputEvent] = new ArrayList[InputEvent](100)
-  private var lastDown: Long = 0
-  private val inputLock = new Object()
+  val NumKeys = 256
+  val NumButtons = 4
 
-  def addListener(listener: InputListener) {
-    inputLock synchronized {
-      listeners ::= listener
-    }
+  private val pressedKeys  = new Array[Boolean](NumKeys)
+  private val releasedKeys = new Array[Boolean](NumKeys)
+  private val heldKeys     = new Array[Boolean](NumKeys)
+  private val pressedButtons  = new Array[Boolean](NumButtons)
+  private val releasedButtons = new Array[Boolean](NumButtons)
+  private val heldButtons     = new Array[Boolean](NumButtons)
+  private var mouseX       = 0
+  private var mouseY       = 0
+  private var mouseMoved   = false
+
+  private var listeners: ArrayList[InputListener] = new ArrayList[InputListener]()
+
+  def isKeyHeld(keyCode: Int): Boolean = {
+    if (keyCode >= 0 && keyCode < NumKeys) heldKeys(keyCode)
+    else false
+  }
+
+  def isMouseButtonHeld(mouseButton: MouseButton): Boolean = {
+    val buttonNum = getMouseButtonNumber(mouseButton)
+    if (buttonNum >= 0 && buttonNum < NumButtons) heldButtons(buttonNum)
+    else false
   }
 
 
+  def addListener(listener: InputListener) {
+    if (!listeners.contains(listener)) {
+      listeners.add(listener)
+    }
+  }
+
+  def removeListener(listener: InputListener) {
+    listeners.remove(listener)
+  }
+
   override def keyPressed(e: KeyEvent) {
-    inputLock synchronized {
-      if (!pressedKeys.contains(e.getKeyCode) && lastDown != e.getWhen) {
-        queuedEvents.add(KeyPressed(e.getKeyCode))
-        pressedKeys.add(e.getKeyCode)
-        lastDown = e.getWhen
-      }
+    var key = e.getKeyCode
+    if (key >= 0 && key < NumKeys) {
+      heldKeys(key)    = true
+      pressedKeys(key) = true
     }
   }
 
   override def keyReleased(e: KeyEvent) {
-    inputLock synchronized {
-      if (pressedKeys.contains(e.getKeyCode) && lastDown != e.getWhen) {
-        queuedEvents.add(KeyReleased(e.getKeyCode))
-        pressedKeys.remove(e.getKeyCode)
-      }
+    var key = e.getKeyCode
+    if (key >= 0 && key < NumKeys) {
+      heldKeys(key)     = false
+      releasedKeys(key) = true
     }
   }
 
-  def mousePressed(e: MouseEvent) {
-    inputLock synchronized {
-      val button: MouseButton = getButton(e)
-      queuedEvents.add(MousePressed(button, e.getX, e.getY))
-      pressedMouseButtons.add(button)
+  override def mousePressed(e: MouseEvent) {
+    var button: Int = e.getButton
+    if (button >= 0 && button < NumButtons) {
+      heldButtons(button)    = true
+      pressedButtons(button) = true
+      mouseX = e.getX
+      mouseY = e.getY
     }
+    mouseMoved = true
   }
 
-  def mouseReleased(e: MouseEvent) {
-    inputLock synchronized {
-      val button: MouseButton = getButton(e)
-      queuedEvents.add(MouseReleased(button, e.getX, e.getY))
-      pressedMouseButtons.remove(button)
+  override def mouseReleased(e: MouseEvent) {
+    var button: Int = e.getButton
+    if (button >= 0 && button < NumButtons) {
+      heldButtons(button)     = false
+      releasedButtons(button) = true
+      mouseX = e.getX
+      mouseY = e.getY
     }
+    mouseMoved = true
   }
 
-  def mouseDragged(e: MouseEvent) {
-    inputLock synchronized {
-      queuedEvents.add(MouseMoved(e.getX, e.getY))
-    }
+  override def mouseMoved(e: MouseEvent) {
+    mouseX = e.getX
+    mouseY = e.getY
+    mouseMoved = true
   }
 
-  def mouseMoved(e: MouseEvent) {
-    inputLock synchronized {
-      queuedEvents.add(MouseMoved(e.getX, e.getY))
-    }
+  override def mouseDragged(e: MouseEvent) {
+    mouseX = e.getX
+    mouseY = e.getY
+    mouseMoved = true
   }
-
 
   // Ignore these
   def mouseClicked(e: MouseEvent) {}
@@ -85,76 +108,97 @@ class InputHandler extends BaseFacet with KeyListener with MouseListener with Mo
 
   override def update(durationSeconds: Double) {
 
-    // Retrieve and clear queue
-    inputLock synchronized {
-      recentEvents.addAll(queuedEvents)
-      queuedEvents.clear()
-    }
-
-    // Notify listeners
-    var keysUpdated = false
-    recentEvents foreach {event =>
-      event match {
-        case event: MouseMoved =>
-          listeners foreach {listener =>
-            listener.onMouseMoved(event, this, durationSeconds)
-          }
-
-        case event: KeyPressed =>
-          keysUpdated = true
-          listeners foreach {listener =>
-            listener.onKeyPressed(event, this, durationSeconds)
-          }
-
-        case event: KeyReleased =>
-          keysUpdated = true
-          listeners foreach {listener =>
-            listener.onKeyReleased(event, this, durationSeconds)
-          }
-
-        case event: MousePressed =>
-          listeners foreach {listener =>
-            listener.onMouseButtonPressed(event, this, durationSeconds)
-          }
-
-        case event: MouseReleased =>
-          listeners foreach {listener =>
-            listener.onMouseButtonReleased(event, this, durationSeconds)
-          }
-
+    // Notify about key presses
+    var keyOrButtonChanged = false
+    var key = 0
+    while (key < NumKeys) {
+      if (heldKeys(key)) {
+        // Key likely pressed after key released, send any press events last
+        keyOrButtonChanged ||= checkAndNotifyKeyRelease(key, durationSeconds)
+        keyOrButtonChanged ||= checkAndNotifyKeyPress(key, durationSeconds)
       }
-    }
-
-    if (keysUpdated) {
-      listeners foreach {listener =>
-        listener.onKeysUpdated(this, durationSeconds)
+      else {
+        // Key likely released after key pressed, send any release events last
+        keyOrButtonChanged ||= checkAndNotifyKeyPress(key, durationSeconds)
+        keyOrButtonChanged ||= checkAndNotifyKeyRelease(key, durationSeconds)
       }
+      key += 1
     }
 
-    recentEvents.clear()
+    // Notify about mouse movement
+    val x = mouseX
+    val y = mouseY
+    if (mouseMoved) {
+      mouseMoved = false
+      listeners foreach {_.onMouseMoved(x, y, this, durationSeconds)}
+    }
+
+    // Notify about mouse presses
+    var button = 0
+    while (button < NumButtons) {
+      val mouseButton = getMouseButtonForNumber(button)
+      if (heldButtons(button)) {
+        // Button likely pressed after released, send any press events last
+        keyOrButtonChanged ||= checkAndNotifyButtonRelease(button, mouseButton, x, y, durationSeconds)
+        keyOrButtonChanged ||= checkAndNotifyButtonPress(button, mouseButton, x, y, durationSeconds)
+      }
+      else {
+        // Button likely released after pressed, send any release events last
+        keyOrButtonChanged ||= checkAndNotifyButtonPress(button, mouseButton, x, y, durationSeconds)
+        keyOrButtonChanged ||= checkAndNotifyButtonRelease(button, mouseButton, x, y, durationSeconds)
+      }
+      button += 1
+    }
+
+    // Notify about key or button changes
+    if (keyOrButtonChanged) {
+      listeners foreach { _.onKeysUpdated(this, durationSeconds) }
+    }
+
+
+  }
+
+
+  private def checkAndNotifyButtonPress(key: Int, mouseButton: MouseButton, x: Int, y: Int, durationSeconds: Double): Boolean = {
+    if (pressedButtons(key)) {
+      listeners foreach { _.onMouseButtonPressed(mouseButton, x, y, this, durationSeconds) }
+      pressedButtons(key) = false
+      true
+    }
+    else false
+  }
+
+  private def checkAndNotifyButtonRelease(key: Int, mouseButton: MouseButton, x: Int, y: Int, durationSeconds: Double): Boolean = {
+    if (releasedButtons(key)) {
+      listeners foreach { _.onMouseButtonReleased(mouseButton, x, y, this, durationSeconds) }
+      releasedButtons(key) = false
+      true
+    }
+    else false
+  }
+
+  private def checkAndNotifyKeyPress(key: Int, durationSeconds: Double): Boolean = {
+    if (pressedKeys(key)) {
+      listeners foreach { _.onKeyPressed(key, this, durationSeconds) }
+      pressedKeys(key) = false
+      true
+    }
+    else false
+  }
+
+  private def checkAndNotifyKeyRelease(key: Int, durationSeconds: Double): Boolean = {
+    if (releasedKeys(key)) {
+      listeners foreach { _.onKeyReleased(key, this, durationSeconds) }
+      releasedKeys(key) = false
+      true
+    }
+    else false
   }
 
 
 
-  def isPressed(keyCode: Int): Boolean = {
-    var contains: Boolean = false
-    inputLock synchronized {
-      contains = pressedKeys.contains(keyCode)
-    }
-    contains
-  }
-
-  def isMouseButtonPressed(mouseButton: MouseButton): Boolean = {
-    var contains: Boolean = false
-    inputLock synchronized {
-      contains = pressedMouseButtons.contains(mouseButton)
-    }
-    contains
-  }
-
-
-  private final def getButton(event: MouseEvent): MouseButton = {
-    event.getButton match {
+  final def getMouseButtonForNumber(button: Int): MouseButton = {
+    button match {
       case MouseEvent.NOBUTTON => NoMouseButton
       case MouseEvent.BUTTON1  => LeftMouseButton
       case MouseEvent.BUTTON2  => MiddleMouseButton
@@ -162,6 +206,18 @@ class InputHandler extends BaseFacet with KeyListener with MouseListener with Mo
       case _                   => UnknownMouseButton
     }
   }
+
+  final def getMouseButtonNumber(button: MouseButton ): Int = {
+    button match {
+      case LeftMouseButton => MouseEvent.BUTTON1
+      case MiddleMouseButton => MouseEvent.BUTTON2
+      case RightMouseButton => MouseEvent.BUTTON3
+      case _ => MouseEvent.NOBUTTON
+    }
+  }
+
+
+
 }
 
 

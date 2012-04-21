@@ -6,6 +6,7 @@ package net.zzorn.gameflow.input
 trait InputEvent {
 }
 
+
 case class KeyPressed(keyCode: Int) extends InputEvent
 case class KeyReleased(keyCode: Int) extends InputEvent
 case class MouseMoved(mouseX: Int, mouseY: Int) extends InputEvent

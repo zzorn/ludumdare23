@@ -1,9 +1,9 @@
 package ludumdare23;
 
 import net.zzorn.gameflow.GameBase;
-import net.zzorn.gameflow.camera.StationaryCamera;
 import net.zzorn.gameflow.camera.TrackingCamera;
 import net.zzorn.gameflow.gamemap.GameMap;
+import net.zzorn.gameflow.input.PrintingInputListener;
 import net.zzorn.utils.Vec3;
 
 import java.awt.*;
@@ -44,8 +44,11 @@ public class Game extends GameBase {
         gameMap.add(planet);
 
 
-        keyHandler().addListener(player);
+        inputHandler().addListener(player);
         gameMap.add(player);
+
+        // Show inputs
+        inputHandler().addListener(new PrintingInputListener());
     }
 
     /**

@@ -3,8 +3,8 @@ package net.zzorn.gameflow
 import input.InputHandler
 import net.zzorn.utils._
 import picture.PictureManager
-import java.awt.{Graphics2D, Color}
 import net.zzorn.gameflow.GameBase._
+import java.awt.{Toolkit, Graphics2D, Color}
 
 /**
  * Extend this in an object, and implement update, render, and optionally init and shutdown.
@@ -50,7 +50,7 @@ class GameBase(title: String = "GameFlow",
   }
 
   final def pictureStore: PictureManager = _pictureStore
-  final def keyHandler: InputHandler = _inputHandler
+  final def inputHandler: InputHandler = _inputHandler
   final def canvas: GameCanvas = _canvas
   final def frame: SimpleFrame = _frame
   final def currentFps: Double = _currentFps
@@ -139,10 +139,10 @@ class GameBase(title: String = "GameFlow",
     _canvas = new GameCanvas()
     _frame = new SimpleFrame(title, _canvas, defaultWidth, defaultHeight)
     _canvas.setup()
+    _canvas.requestFocus()
     _canvas.addKeyListener(_inputHandler)
-    //_canvas.addMouseListener(_inputHandler)
-    //_canvas.addMouseMotionListener(_inputHandler)
-    //_canvas.requestFocus()
+    _canvas.addMouseListener(_inputHandler)
+    _canvas.addMouseMotionListener(_inputHandler)
   }
 
 
@@ -154,7 +154,7 @@ class GameBase(title: String = "GameFlow",
       val actualFrameDurationNs = lastTimestamp - System.nanoTime()
       val requiredDelayMs = math.max(1, (targetFrameDurationNs - actualFrameDurationNs) * NanosecondsToMilliseconds)
       //Thread.sleep(requiredDelayMs.toLong)
-      Thread.sleep(1)
+      Thread.sleep(10)
     }
 
     // Get time since last frame

@@ -19,6 +19,10 @@ object CubeExample extends GameBase("Cube Example") {
 
   private val gameMap = new GameMap(new WobbleCamera(wobbleSize = Vec3(40, 10), wobbleSpeed = 4))
 
+  def main(args: Array[String]) {
+    CubeExample.start()
+  }
+
   override protected def init() {
 
     // Add cubes
