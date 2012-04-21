@@ -3,10 +3,13 @@ package ludumdare23;
 import net.zzorn.gameflow.GameBase;
 import net.zzorn.gameflow.camera.TrackingCamera;
 import net.zzorn.gameflow.gamemap.GameMap;
+import net.zzorn.gameflow.input.InputListenerAdapter;
+import net.zzorn.gameflow.input.InputStatus;
 import net.zzorn.gameflow.input.PrintingInputListener;
 import net.zzorn.utils.Vec3;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 /**
  * Created with IntelliJ IDEA.
@@ -36,9 +39,15 @@ public class Game extends GameBase {
     @Override
     public void init() {
 
-
+        // Create players ship
         PlayerShip player = new PlayerShip(planet, this.pictureStore().get("images/playership.png"));
-        gameMap=new GameMap(new TrackingCamera(player,10, 10));
+
+        // Create a camera that tracks the player
+        final TrackingCamera camera = new TrackingCamera(player, 10, 10);
+        camera.setCameraScale(0.1);
+
+        // Set up the map
+        gameMap=new GameMap(camera);
         addFacet(gameMap);
         gameMap.add(new FloatingParticle(planet, new Vec3(planet.getRadius_m()+50,0,0) , 20 ,new Vec3(90, 100,0 ),1,Color.BLUE));
         gameMap.add(new FloatingParticle(planet, new Vec3(planet.getRadius_m()+50,0,0) , 20 ,new Vec3(10, 0,0 ),2,Color.GRAY));
@@ -52,6 +61,15 @@ public class Game extends GameBase {
 
         // Show inputs
         inputHandler().addListener(new PrintingInputListener());
+
+        // Zoom
+        inputHandler().addListener(new InputListenerAdapter(){
+            @Override
+            public void onKeysUpdated(InputStatus inputStatus, double durationSeconds) {
+                if (inputStatus.isKeyHeld(KeyEvent.VK_PAGE_UP))   camera.setCameraScale(camera.cameraScale() * 0.5);
+                if (inputStatus.isKeyHeld(KeyEvent.VK_PAGE_DOWN)) camera.setCameraScale(camera.cameraScale() * 2.0);
+            }
+        });
     }
 
     /**

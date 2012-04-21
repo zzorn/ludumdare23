@@ -47,9 +47,11 @@ class Cube(gravity: Vec3, fadeintime: Double, airresistance: Double) extends Ent
     calculateSize()
   }
 
-  override def draw(g: Graphics2D, screenW: Int, screenH: Int, x: Int, y: Int) {
+  override def draw(g: Graphics2D, screenW: Int, screenH: Int, x: Int, y: Int, scale: Double) {
     g.setColor(color)
-    g.fillRect(x, y, size.x.toInt, size.y.toInt)
+    var w = (size.x * scale).toInt
+    var h = (size.y * scale).toInt
+    g.fillRect(x - w/2, y - h/2, w, h)
   }
 
 

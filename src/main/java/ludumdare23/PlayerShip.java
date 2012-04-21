@@ -85,7 +85,7 @@ public class PlayerShip extends InputListenerAdapter implements Entity {
     }
 
     @Override
-    public void draw(Graphics2D g, int screenW, int screenH, int x, int y) {
+    public void draw(Graphics2D g, int screenW, int screenH, int x, int y, double scale) {
         image.draw(g,x-image.w()/2,y-image.h()/2);
     }
 }

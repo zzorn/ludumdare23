@@ -122,8 +122,8 @@ public class FloatingParticle extends Entity3D {
     }
 
         @Override
-        public void draw(Graphics2D g, int screenW, int screenH, int x, int y) {
-            int r= (int) rad_m ;
+        public void draw(Graphics2D g, int screenW, int screenH, int x, int y, double scale) {
+            int r= (int) (rad_m * scale);
             if (onSurface==true && color != Color.BLACK )g.setColor(Color.RED);
             else
             g.setColor(color);

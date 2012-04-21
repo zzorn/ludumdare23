@@ -55,12 +55,12 @@ class GameMap(var camera: Camera = new StationaryCamera()) extends BaseFacet {
       worldPos.set(entity.pos)
       camera.worldPosToScreenPos(worldPos, screenPos, screenW, screenH)
 
-      drawEntity(g, screenW, screenH, entity, screenPos.x.toInt, screenPos.y.toInt)
+      drawEntity(g, screenW, screenH, entity, screenPos.x.toInt, screenPos.y.toInt, camera.cameraScale)
     }
   }
 
-  protected def drawEntity(g: Graphics2D, screenW: Int, screenH: Int, entity: Entity, x: Int, y: Int) {
-    entity.draw(g, screenW, screenH, x, y)
+  protected def drawEntity(g: Graphics2D, screenW: Int, screenH: Int, entity: Entity, x: Int, y: Int, scale: Double) {
+    entity.draw(g, screenW, screenH, x, y, scale)
   }
 
   protected def drawMapBackground(g: Graphics2D, screenW: Int, screenH: Int) {

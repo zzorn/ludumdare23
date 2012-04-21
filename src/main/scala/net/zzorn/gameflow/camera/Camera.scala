@@ -14,12 +14,16 @@ trait Camera {
   var cameraScale: Double = 1.0
   val cameraPos: Vec3 = Vec3()
 
+  def setCameraScale(scale: Double) {
+    cameraScale = scale
+  }
+
   def update(seconds: Double) {}
 
   def worldPosToScreenPos(worldPos: Vec3, screenPosOut: Vec2, screenW: Int, screenH: Int) {
     tempPos.set(worldPos)
     tempPos -= cameraPos
-    tempPos /= cameraScale
+    tempPos *= cameraScale
 
     tempPos.x += screenW / 2
     tempPos.y += screenH / 2

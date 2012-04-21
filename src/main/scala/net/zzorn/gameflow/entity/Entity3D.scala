@@ -18,6 +18,6 @@ class Entity3D extends Entity{
     pos      +*= (velocity, durationSeconds)
   }
 
-  def draw(g: Graphics2D, screenW: Int, screenH: Int, x: Int, y: Int) {
+  def draw(g: Graphics2D, screenW: Int, screenH: Int, x: Int, y: Int, scale: Double) {
   }
 }

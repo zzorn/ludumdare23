@@ -3,7 +3,7 @@ package net.zzorn.gameflow.input
 /**
  *
  */
-class InputListenerAdapter extends InputListener {
+abstract class InputListenerAdapter extends InputListener {
 
   override def onKeyPressed(key: Int, inputStatus: InputStatus, durationSeconds: Double) {}
   override def onKeyReleased(key: Int, inputStatus: InputStatus, durationSeconds: Double) {}

@@ -33,9 +33,9 @@ public class Planet extends Entity3D {
     }
 
     @Override
-    public void draw(Graphics2D g, int screenW, int screenH, int x, int y) {
+    public void draw(Graphics2D g, int screenW, int screenH, int x, int y, double scale) {
         g.setColor(Color.GREEN);
-        int r = (int) radius_m;
+        int r = (int) (radius_m * scale);
         g.fillOval(x - r, y - r, 2 * r, 2 * r);
     }
 
