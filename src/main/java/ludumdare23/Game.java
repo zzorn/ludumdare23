@@ -2,6 +2,7 @@ package ludumdare23;
 
 import net.zzorn.gameflow.GameBase;
 import net.zzorn.gameflow.camera.StationaryCamera;
+import net.zzorn.gameflow.camera.TrackingCamera;
 import net.zzorn.gameflow.gamemap.GameMap;
 import net.zzorn.utils.Vec3;
 
@@ -34,14 +35,15 @@ public class Game extends GameBase {
      */
     @Override
     public void init() {
-        gameMap=new GameMap(new StationaryCamera(new Vec3(0,0,0)));
+        PlayerShip player = new PlayerShip(planet);
+        gameMap=new GameMap(new TrackingCamera(player,10, 10));
         addFacet(gameMap);
         gameMap.add(new FloatingParticle(planet, new Vec3(planet.getRadius_m()+50,0,0) , 20 ,new Vec3(90, 100,0 ),1,Color.BLUE));
         gameMap.add(new FloatingParticle(planet, new Vec3(planet.getRadius_m()+50,0,0) , 20 ,new Vec3(10, 0,0 ),2,Color.GRAY));
         gameMap.add(new FloatingParticle(planet, new Vec3(planet.getRadius_m()+550,0,0) , 20 ,new Vec3(-100, 20,0 ),100,Color.YELLOW));
         gameMap.add(planet);
 
-        PlayerShip player = new PlayerShip(planet);
+
         keyHandler().addListener(player);
         gameMap.add(player);
     }
