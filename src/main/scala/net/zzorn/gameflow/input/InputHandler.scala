@@ -94,7 +94,6 @@ class InputHandler extends BaseFacet with KeyListener with MouseListener with Mo
     // Notify listeners
     var keysUpdated = false
     recentEvents foreach {event =>
-      println(event)
       event match {
         case event: MouseMoved =>
           listeners foreach {listener =>
@@ -114,13 +113,11 @@ class InputHandler extends BaseFacet with KeyListener with MouseListener with Mo
           }
 
         case event: MousePressed =>
-          keysUpdated = true
           listeners foreach {listener =>
             listener.onMouseButtonPressed(event, this, durationSeconds)
           }
 
         case event: MouseReleased =>
-          keysUpdated = true
           listeners foreach {listener =>
             listener.onMouseButtonReleased(event, this, durationSeconds)
           }

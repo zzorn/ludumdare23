@@ -140,9 +140,9 @@ class GameBase(title: String = "GameFlow",
     _frame = new SimpleFrame(title, _canvas, defaultWidth, defaultHeight)
     _canvas.setup()
     _canvas.addKeyListener(_inputHandler)
-    _canvas.addMouseListener(_inputHandler)
-    _canvas.addMouseMotionListener(_inputHandler)
-    _canvas.requestFocus()
+    //_canvas.addMouseListener(_inputHandler)
+    //_canvas.addMouseMotionListener(_inputHandler)
+    //_canvas.requestFocus()
   }
 
 
