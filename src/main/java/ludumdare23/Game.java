@@ -35,6 +35,8 @@ public class Game extends GameBase {
      */
     @Override
     public void init() {
+
+
         PlayerShip player = new PlayerShip(planet, this.pictureStore().get("images/playership.png"));
         gameMap=new GameMap(new TrackingCamera(player,10, 10));
         addFacet(gameMap);
@@ -42,6 +44,7 @@ public class Game extends GameBase {
         gameMap.add(new FloatingParticle(planet, new Vec3(planet.getRadius_m()+50,0,0) , 20 ,new Vec3(10, 0,0 ),2,Color.GRAY));
         gameMap.add(new FloatingParticle(planet, new Vec3(planet.getRadius_m()+550,0,0) , 20 ,new Vec3(-100, 20,0 ),100,Color.YELLOW));
         gameMap.add(planet);
+
 
 
         keyHandler().addListener(player);
