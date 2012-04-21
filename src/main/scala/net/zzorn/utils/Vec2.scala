@@ -79,46 +79,57 @@ final case class Vec2(var x: Double = 0.0, var y: Double = 0.0) {
     }
   }
 
+  @inline
   def setX(x: Double) {
     this.x = x
   }
 
+  @inline
   def setY(y: Double) {
     this.y = y
   }
 
+  @inline
   def setPlus (scalar: Double) {
     += (scalar)
   }
 
+  @inline
   def setMinus (scalar: Double) {
     -= (scalar)
   }
 
+  @inline
   def setMul (scalar: Double) {
     *= (scalar)
   }
 
+  @inline
   def setDiv (scalar: Double) {
     /= (scalar)
   }
 
+  @inline
   def setPlus (other: Vec2) {
     += (other)
   }
 
+  @inline
   def setMinus (other: Vec2) {
     -= (other)
   }
 
+  @inline
   def setMul (other: Vec2) {
     *= (other)
   }
 
+  @inline
   def setDiv (other: Vec2) {
     /= (other)
   }
 
+  @inline
   def setPlusMul (other: Vec2, scalar: Double) {
     +*= (other, scalar)
   }

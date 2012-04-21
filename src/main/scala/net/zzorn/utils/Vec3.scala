@@ -45,6 +45,13 @@ final case class Vec3(var x: Double = 0.0, var y: Double = 0.0, var z: Double = 
   }
 
   @inline
+  def set (other: Vec2) {
+    this.x = other.x
+    this.y = other.y
+    this.z = 0.0
+  }
+
+  @inline
   def mixWith(other: Vec3, amount: Double = 0.5) {
     val selfAmount = 1.0 - amount
     x = x * selfAmount + other.x * amount
