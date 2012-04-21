@@ -21,8 +21,8 @@ trait Camera {
     tempPos -= cameraPos
     tempPos /= cameraScale
 
-    tempPos.x -= screenW / 2
-    tempPos.y -= screenH / 2
+    tempPos.x += screenW / 2
+    tempPos.y += screenH / 2
 
     screenPosOut.x = tempPos.x
     screenPosOut.y = tempPos.y
