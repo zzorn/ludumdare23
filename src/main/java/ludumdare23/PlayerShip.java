@@ -25,24 +25,24 @@ public class PlayerShip extends InputListenerAdapter implements Entity {
     private double angVelosity=0;
     private double angAcc =0;
     private double angSlow = 0.98 ;
-    private final Picture image;
+    private final Picture picture;
 
-    private Vec3 myPos = new Vec3(0,0,0);
-    private Vec3 myVelocity = new Vec3(0,0,0);
+    private Vec3 pos = new Vec3(0,0,0);
+    private Vec3 velocity = new Vec3(0,0,0);
 
 
     @Override
     public Vec3 pos() {
-        return myPos;
+        return pos;
     }
 
     @Override
     public Vec3 velocity() {
-        return myVelocity;
+        return velocity;
     }
 
-    public PlayerShip(Planet planet, Picture image ) {
-        this.image = image;
+    public PlayerShip(Planet planet, Picture picture) {
+        this.picture = picture;
         distance = planet.getRadius_m()+50;
         this.planet = planet;
         pos().setX(planet.pos().x());
@@ -86,6 +86,6 @@ public class PlayerShip extends InputListenerAdapter implements Entity {
 
     @Override
     public void draw(Graphics2D g, int screenW, int screenH, int x, int y, double scale) {
-        image.draw(g,x-image.w()/2,y-image.h()/2);
+        picture.draw(g,x- picture.w()/2,y- picture.h()/2);
     }
 }

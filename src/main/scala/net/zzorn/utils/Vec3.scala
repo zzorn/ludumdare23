@@ -8,12 +8,20 @@ object Vec3 {
   private val r = new Random()
 
   def random(): Vec3 = {
-    Vec3(r.nextDouble(), r.nextDouble(), r.nextDouble())
+    Vec3(
+      r.nextDouble() * 2 - 1 ,
+      r.nextDouble() * 2 - 1 ,
+      r.nextDouble() * 2 - 1
+    )
   }
 
   def random(seed: Long): Vec3 = {
     r.setSeed(seed)
-    Vec3(r.nextDouble(), r.nextDouble(), r.nextDouble())
+    Vec3(
+      r.nextDouble() * 2 - 1 ,
+      r.nextDouble() * 2 - 1 ,
+      r.nextDouble() * 2 - 1
+    )
   }
 
 }
@@ -78,7 +86,7 @@ final case class Vec3(var x: Double = 0.0, var y: Double = 0.0, var z: Double = 
   }
 
   @inline
-  def normalizeLocal() {
+  def setNormalized() {
     val len = math.sqrt(x*x + y*y + z*z)
     if (len == 0) {
       x = 1

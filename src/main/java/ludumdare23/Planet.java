@@ -1,9 +1,7 @@
 package ludumdare23;
 
-import net.zzorn.gameflow.entity.Entity;
 import net.zzorn.gameflow.entity.Entity3D;
 import net.zzorn.utils.Vec3;
-import sun.font.TrueTypeFont;
 
 import java.awt.*;
 
@@ -15,17 +13,12 @@ import java.awt.*;
  * To change this template use File | Settings | File Templates.
  */
 public class Planet extends Entity3D {
-    private int width = 100;
-    private int height = 100;
     private double mass_kg = 100000000000000000.0;
-    private Vec3 pos = new Vec3(0, 0, 0);
-    private Vec3 velocity = new Vec3(0, 0, 0);
+    private double radius_m = 1000;
 
     public double getRadius_m() {
         return radius_m;
     }
-
-    private double radius_m = 1000;
 
 
     public double getMass_kg() {
@@ -58,7 +51,7 @@ public class Planet extends Entity3D {
         Vec3 normal = new Vec3(0, 0, 0);
         normal.set(point);
         normal.setMinus(pos());
-        normal.normalizeLocal();
+        normal.setNormalized();
         return normal;
     }
 }

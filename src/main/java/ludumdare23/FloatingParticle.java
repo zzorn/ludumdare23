@@ -1,18 +1,12 @@
 package ludumdare23;
 
-import net.zzorn.gameflow.entity.Entity;
 import net.zzorn.gameflow.entity.Entity3D;
-import net.zzorn.utils.Vec2;
 import net.zzorn.utils.Vec3;
 
 import java.awt.*;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Shiera
- * Date: 21.4.2012
- * Time: 10:27
- * To change this template use File | Settings | File Templates.
+ * A particle thrown up by an explosion
  */
 public class FloatingParticle extends Entity3D {
     private Vec3 acc=new Vec3(0,0,0);
@@ -51,25 +45,22 @@ public class FloatingParticle extends Entity3D {
             acc.zero();
         }
 
-        if  (onSurface==false) {
+        if (!onSurface) {
             acc.set(planet.pos());
             acc.setMinus(pos());
             double distance=acc.length();
             if (distance==0) distance=1;
 
-
-
             double a=((6.67E-11*planet.getMass_kg())/(distance*distance));
             if (distance<planet.getRadius_m()){
                 a=((6.67E-11*distance)/(planet.getRadius_m()*planet.getRadius_m()));
             }
-            double airRes=(-1.0/(distance*distance));
 
-
-
-
-            acc.normalizeLocal();
+            acc.setNormalized();
             acc.setMul(a);
+
+            // Apply air resistance
+            double airRes=(-1.0/(distance*distance));
             airResVec.set(velocity());
             airResVec.setMul(airRes);
             acc.setPlus(airResVec);
@@ -95,7 +86,7 @@ public class FloatingParticle extends Entity3D {
                   // calculate bounce
                 Vec3 v=planet.normalAt(pos());
                 double angle = v.angleBetween(velocity());
-                if (((0.5)*mass_kg*velocity().length()*velocity().length())>100000) {
+                if (((0.5)*mass_kg* velocity().length()* velocity().length())>100000) {
                     this.color = Color.BLACK;
                     velocity().zero();
                 }
@@ -112,9 +103,7 @@ public class FloatingParticle extends Entity3D {
 
         }
 
-        if (onSurface==true) {
-
-
+        if (onSurface) {
             Vec3 normal=planet.normalAt(pos());
             normal.setMul(surfaceDist);
             pos().setMinus(normal);
@@ -124,7 +113,7 @@ public class FloatingParticle extends Entity3D {
         @Override
         public void draw(Graphics2D g, int screenW, int screenH, int x, int y, double scale) {
             int r= (int) (rad_m * scale);
-            if (onSurface==true && color != Color.BLACK )g.setColor(Color.RED);
+            if (onSurface && color != Color.BLACK )g.setColor(Color.RED);
             else
             g.setColor(color);
             g.fillOval(x-r,y-r,2*r,2*r);

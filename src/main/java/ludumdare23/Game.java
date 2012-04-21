@@ -10,18 +10,18 @@ import net.zzorn.utils.Vec3;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.Random;
 
 /**
- * Created with IntelliJ IDEA.
- * User: Shiera
- * Date: 21.4.2012
- * Time: 10:00
- * To change this template use File | Settings | File Templates.
+ * Ludumdare 23 game jam entry, main game class.
  */
 public class Game extends GameBase {
 
     private GameMap gameMap=null;
     private Planet planet=new Planet();
+
+    private Random random = new Random(42);
+
 
     public Game() {
         super("planeettapeli", 300.0, 1200, 1000, "");
@@ -41,6 +41,7 @@ public class Game extends GameBase {
 
         // Create players ship
         PlayerShip player = new PlayerShip(planet, this.pictureStore().get("images/playership.png"));
+        inputHandler().addListener(player);
 
         // Create a camera that tracks the player
         final TrackingCamera camera = new TrackingCamera(player, 10, 10);
@@ -48,21 +49,22 @@ public class Game extends GameBase {
 
         // Set up the map
         gameMap=new GameMap(camera);
-        addFacet(gameMap);
         gameMap.add(new FloatingParticle(planet, new Vec3(planet.getRadius_m()+50,0,0) , 20 ,new Vec3(90, 100,0 ),1,Color.BLUE));
         gameMap.add(new FloatingParticle(planet, new Vec3(planet.getRadius_m()+50,0,0) , 20 ,new Vec3(10, 0,0 ),2,Color.GRAY));
         gameMap.add(new FloatingParticle(planet, new Vec3(planet.getRadius_m()+550,0,0) , 20 ,new Vec3(-100, 20,0 ),100,Color.YELLOW));
         gameMap.add(planet);
-
-
-        inputHandler().addListener(player);
-
         gameMap.add(player);
+        addFacet(gameMap);
 
-        // Show inputs
+        // Add enemies
+        for (int i = 0; i < 10; i++) {
+            gameMap.add(createEnemy(planet, player));
+        }
+
+        // Print inputs for debugging purposes
         inputHandler().addListener(new PrintingInputListener());
 
-        // Zoom
+        // Register page up and page down keys to change the camera zoom
         inputHandler().addListener(new InputListenerAdapter(){
             @Override
             public void onKeysUpdated(InputStatus inputStatus, double durationSeconds) {
@@ -72,21 +74,30 @@ public class Game extends GameBase {
         });
     }
 
-    /**
-     * Called once in each mainloop, immediately before render.
-     *
-     * @param durationSec the duration of the previous frame, in seconds.
-     */
-    @Override
-    public void update(double durationSec) {
+
+    private EnemyShip createEnemy(Planet planet, PlayerShip player) {
+
+
+        // Create enemy ship
+        double maxSpeed = randomValue(10, 1000);
+        double enginePower = randomValue(10, 1000);
+        EnemyShip enemyShip = new EnemyShip(planet, player, pictureStore().get("images/enemyship1.png"), enginePower, maxSpeed);
+
+        // Randomize enemy start position and speed
+        enemyShip.pos().set(createRandomVec(10000));
+        enemyShip.velocity().set(createRandomVec(1000));
+
+        return enemyShip;
     }
 
-    /**
-     * Render the game contents to the specified screen raster.
-     *
-     * @param screen the graphics to render to.
-     */
-    @Override
-    public void render(Graphics2D screen, int screenW, int screenH) {
+    private double randomValue(double start, double end) {
+        return random.nextDouble() * (end - start) + start;
+    }
+
+    private Vec3 createRandomVec(double area) {
+        Vec3 randomPos = Vec3.random();
+        randomPos.setMul(area);
+        randomPos.setZ(0);
+        return randomPos;
     }
 }
