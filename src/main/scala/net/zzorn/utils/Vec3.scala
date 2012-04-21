@@ -91,6 +91,20 @@ final case class Vec3(var x: Double = 0.0, var y: Double = 0.0, var z: Double = 
       z /= len
     }
   }
+
+  @inline
+  def dot(other: Vec3): Double = {
+    x*other.x +
+    y*other.y +
+    z*other.z
+  }
+
+  @inline
+  def angleBetween(other: Vec3): Double = {
+    val dotProd = dot(other)
+    math.acos(dotProd / (length * other.length))
+  }
+
   @inline
   def setX(x: Double) {
     this.x = x
