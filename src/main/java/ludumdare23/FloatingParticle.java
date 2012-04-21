@@ -29,7 +29,7 @@ public class FloatingParticle extends Entity3D {
     public FloatingParticle(Planet planet){
         this.planet = planet;
         pos().set((2*planet.getRadius_m()),0,0 );
-        velocity().set(0, 170,0);
+        velocity().set(0, 100,0);
 
     }
 
@@ -50,7 +50,7 @@ public class FloatingParticle extends Entity3D {
         acc.setPlus(airResVec);
         velocity().$plus$times$eq(acc, durationSeconds);
         pos().$plus$times$eq(velocity(),durationSeconds);
-        boolean inside = planet.isInside()
+        boolean inside = planet.isInside(pos(), rad_m);
 
         if (inside && prevInside==false ){
             velocity().setMul(-1);

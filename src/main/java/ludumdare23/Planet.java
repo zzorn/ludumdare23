@@ -46,7 +46,7 @@ public class Planet extends Entity3D {
 
 
     public boolean isInside(Vec3 point, double radius){
-
+      double midDist= point.distance(pos());
       double distance= midDist-radius_m-radius;
         return (distance<=0 );
 

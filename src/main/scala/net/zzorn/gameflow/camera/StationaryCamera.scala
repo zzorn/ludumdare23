@@ -8,6 +8,7 @@ import net.zzorn.gameflow.camera.Camera
  */
 class StationaryCamera(val initialCameraPos: Vec3 = Vec3()) extends Camera {
 
+
   cameraPos.set(initialCameraPos)
 
 
