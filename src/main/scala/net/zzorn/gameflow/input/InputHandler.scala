@@ -94,22 +94,23 @@ class InputHandler extends BaseFacet with KeyListener with MouseListener with Mo
     // Notify listeners
     var keysUpdated = false
     recentEvents foreach {event =>
+      println(event)
       event match {
         case event: MouseMoved =>
           listeners foreach {listener =>
             listener.onMouseMoved(event, this, durationSeconds)
           }
 
-        case down: KeyPressed =>
+        case event: KeyPressed =>
           keysUpdated = true
           listeners foreach {listener =>
-            listener.onKeyPressed(down.keyCode, this, durationSeconds)
+            listener.onKeyPressed(event, this, durationSeconds)
           }
 
-        case up: KeyReleased =>
+        case event: KeyReleased =>
           keysUpdated = true
           listeners foreach {listener =>
-            listener.onKeyReleased(up.keyCode, this, durationSeconds)
+            listener.onKeyReleased(event, this, durationSeconds)
           }
 
         case event: MousePressed =>
