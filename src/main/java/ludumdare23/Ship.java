@@ -14,7 +14,12 @@ public class Ship extends Entity3D {
 
     @Override
     public void draw(Graphics2D g, int screenW, int screenH, int x, int y) {
-        g.setColor(shipColor);
-        g.fillOval(x - shipSize/2, y - shipSize/4, shipSize, shipSize/2);
+        drawColoredOval(g, x, y, Color.BLACK, shipSize + 4);
+        drawColoredOval(g, x, y, shipColor, shipSize);
+    }
+
+    private void drawColoredOval(Graphics2D g, int x, int y, Color color, int size) {
+        g.setColor(color);
+        g.fillOval(x - size /2, y - size /4, size, size /2);
     }
 }

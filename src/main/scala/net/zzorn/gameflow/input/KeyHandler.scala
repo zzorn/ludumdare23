@@ -16,52 +16,73 @@ class KeyHandler extends BaseFacet with KeyListener {
   private val pressedKeys = new HashSet[Int]()
   private var listeners: List[InputListener] = Nil
   private val queuedEvents: ArrayList[InputEvent] = new ArrayList[InputEvent](100)
+  private var lastDown: Long = 0
+  private val keyReadLock = new Object()
 
   def addListener(listener: InputListener) {
-    listeners ::= listener
+    keyReadLock synchronized {
+      listeners ::= listener
+    }
   }
 
 
   def keyTyped(e: KeyEvent) {}
 
   override def keyPressed(e: KeyEvent) {
-    queuedEvents.add(KeyDown(e.getKeyCode))
-    pressedKeys.add(e.getKeyCode)
+    keyReadLock synchronized {
+      if (!pressedKeys.contains(e.getKeyCode) && lastDown != e.getWhen) {
+        queuedEvents.add(KeyDown(e.getKeyCode))
+        pressedKeys.add(e.getKeyCode)
+        lastDown = e.getWhen
+      }
+    }
   }
 
   override def keyReleased(e: KeyEvent) {
-    queuedEvents.add(KeyUp(e.getKeyCode))
-    pressedKeys.remove(e.getKeyCode)
+    keyReadLock synchronized {
+      if (pressedKeys.contains(e.getKeyCode) && lastDown != e.getWhen) {
+        queuedEvents.add(KeyUp(e.getKeyCode))
+        pressedKeys.remove(e.getKeyCode)
+      }
+    }
   }
 
 
   override def update(durationSeconds: Double) {
-    queuedEvents foreach {event =>
-      event match {
-        case down: KeyDown =>
-          listeners foreach {listener =>
-            listener.onKeyPressed(down.keyCode, this, durationSeconds)
-          }
+    keyReadLock synchronized {
+      queuedEvents foreach {event =>
+        event match {
+          case down: KeyDown =>
+            listeners foreach {listener =>
+              listener.onKeyPressed(down.keyCode, this, durationSeconds)
+            }
 
-        case up: KeyUp =>
-          listeners foreach {listener =>
-            listener.onKeyReleased(up.keyCode, this, durationSeconds)
-          }
+          case up: KeyUp =>
+            listeners foreach {listener =>
+              listener.onKeyReleased(up.keyCode, this, durationSeconds)
+            }
+        }
       }
-    }
 
-    if (!queuedEvents.isEmpty) {
-      listeners foreach {listener =>
-        listener.onKeysUpdated(this, durationSeconds)
+      if (!queuedEvents.isEmpty) {
+        listeners foreach {listener =>
+          listener.onKeysUpdated(this, durationSeconds)
+        }
       }
-    }
 
-    queuedEvents.clear()
+      queuedEvents.clear()
+    }
   }
 
 
 
-  def isPressed(keyCode: Int): Boolean = pressedKeys.contains(keyCode)
+  def isPressed(keyCode: Int): Boolean = {
+    var contains: Boolean = false
+    keyReadLock synchronized {
+      contains = pressedKeys.contains(keyCode)
+    }
+    contains
+  }
 
 }
 
