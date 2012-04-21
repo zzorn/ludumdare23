@@ -25,7 +25,7 @@ public class Planet extends Entity3D {
         return radius_m;
     }
 
-    private double radius_m = 200;
+    private double radius_m = 1000;
 
 
     public double getMass_kg() {
