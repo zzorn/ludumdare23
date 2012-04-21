@@ -55,7 +55,7 @@ public class Game extends GameBase {
      * @param screen the graphics to render to.
      */
     @Override
-    public void draw(Graphics2D screen, int screenW, int screenH) {
-        gameMap.draw(screen, screenW, screenH);
+    public void render(Graphics2D screen, int screenW, int screenH) {
+        gameMap.render(screen, screenW, screenH);
     }
 }

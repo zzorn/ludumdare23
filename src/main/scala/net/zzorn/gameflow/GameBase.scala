@@ -1,8 +1,10 @@
 package net.zzorn.gameflow
 
+import input.KeyHandler
 import net.zzorn.utils._
 import picture.PictureManager
 import java.awt.{Graphics2D, Color}
+import net.zzorn.gameflow.GameBase._
 
 /**
  * Extend this in an object, and implement update, render, and optionally init and shutdown.
@@ -25,8 +27,10 @@ class GameBase(title: String = "GameFlow",
   final private var _canvas: GameCanvas = null
   final private var _currentFps: Double = 0.0
   final private var _targetFps: Double = 0.0
-
   final private val _pictureStore: PictureManager = new PictureManager(picturePath)
+  final private val _keyHandler: KeyHandler = new KeyHandler()
+
+  private final val facetManager: FacetManager = new FacetManager()
 
   targetFps = initialTargetFps
 
@@ -37,7 +41,16 @@ class GameBase(title: String = "GameFlow",
 //    start()
 //  }
 
+  final def addFacet(facet: Facet) {
+    facetManager.addFacet(facet)
+  }
+
+  final def removeFacet(facet: Facet) {
+    facetManager.removeFacet(facet)
+  }
+
   final def pictureStore: PictureManager = _pictureStore
+  final def keyHandler: KeyHandler = _keyHandler
   final def canvas: GameCanvas = _canvas
   final def frame: SimpleFrame = _frame
   final def currentFps: Double = _currentFps
@@ -57,20 +70,26 @@ class GameBase(title: String = "GameFlow",
       // Setup logging
       Logging.initializeLogging(getClass.getPackage.getName, "net.zzorn")
 
+      // Setup screen
       createScreen()
 
+      // Setup keyboard input
+      addFacet(_keyHandler)
+
+      facetManager.init()
       init()
 
       while (running) {
         var duration = tickClock()
 
+        facetManager.update(duration)
         update(duration)
 
+        // Get surface to render on
         var surface: Graphics2D = canvas.acceleratedSurface
-        //surface.setColor(Color.black);
-        //surface.fillRect(0,0,800,600);
 
-        draw(surface, canvas.getWidth, canvas.getHeight)
+        facetManager.render(surface, canvas.getWidth, canvas.getHeight)
+        render(surface, canvas.getWidth, canvas.getHeight)
 
         // We'll need to manually dispose the graphics
         surface.dispose()
@@ -79,7 +98,8 @@ class GameBase(title: String = "GameFlow",
         canvas.flipPage()
       }
 
-      shutdown()
+      facetManager.deInit()
+      deInit()
     }
   }
 
@@ -105,20 +125,21 @@ class GameBase(title: String = "GameFlow",
    * Render the game contents to the specified screen raster.
    * @param screen the graphics to render to.
    */
-  protected def draw(screen: Graphics2D, screenW: Int, screenH: Int) {}
+  protected def render(screen: Graphics2D, screenW: Int, screenH: Int) {}
 
   /**
    * Called after the mainloop has terminated, and before the program exits.
    * The screen is still available and visible.
    * Can be used to do any needed cleanup.
    */
-  protected def shutdown() {}
+  protected def deInit() {}
 
 
   final private def createScreen() {
     _canvas = new GameCanvas()
     _frame = new SimpleFrame(title, _canvas, defaultWidth, defaultHeight)
     _canvas.setup()
+    _canvas.addKeyListener(_keyHandler)
   }
 
 

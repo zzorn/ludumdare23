@@ -7,11 +7,12 @@ import java.util.{List, Collections, ArrayList}
 import net.zzorn.utils.{Vec2, Vec3}
 import java.awt.{Color, Graphics2D}
 import net.zzorn.gameflow.camera.{StationaryCamera, Camera}
+import net.zzorn.gameflow.{BaseFacet, Facet}
 
 /**
  * Basic game map class.
  */
-class GameMap(var camera: Camera = new StationaryCamera()) {
+class GameMap(var camera: Camera = new StationaryCamera()) extends BaseFacet {
 
   private val _entities: ArrayList[Entity] = new ArrayList[Entity]()
   private val unmodifiableList: List[Entity] = Collections.unmodifiableList(_entities)
@@ -20,13 +21,13 @@ class GameMap(var camera: Camera = new StationaryCamera()) {
 
   def entities: java.util.List[Entity] = unmodifiableList
 
-  final def update(seconds: Double) {
+  override final def update(seconds: Double) {
     _entities foreach {e => e.update(seconds)}
     updateMap(seconds)
     camera.update(seconds)
   }
 
-  final def draw(g: Graphics2D, screenW: Int, screenH: Int) {
+  override final def render(g: Graphics2D, screenW: Int, screenH: Int) {
     drawMap(g, screenW, screenH, unmodifiableList)
   }
 
