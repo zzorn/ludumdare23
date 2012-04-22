@@ -1,17 +1,14 @@
 package net.zzorn.gameflow.examples.movement
 
 import java.awt.{Graphics2D, Color}
-import net.zzorn.gameflow.entity.Entity
 import net.zzorn.utils.{Vec3, ColorUtils, Vec2}
+import net.zzorn.gameflow.entity.{Entity3D, Entity}
 
 /**
  * Simple cube entity.
  */
-class Cube(gravity: Vec3, fadeintime: Double, airresistance: Double) extends Entity() {
+class Cube(gravity: Vec3, fadeintime: Double, airresistance: Double) extends Entity3D() {
 
-  val pos = Vec3()
-  val velocity = Vec3()
-  val thrust = Vec3()
 
   val size = Vec2()
   val baseSize = Vec2()

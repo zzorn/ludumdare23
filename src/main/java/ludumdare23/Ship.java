@@ -18,6 +18,7 @@ public abstract class Ship extends BaseEntity {
     }
 
     public void fire(Vec3 target) {
+        System.out.println("Try to pew");
         if (weapon != null) weapon.fire(target);
     }
 

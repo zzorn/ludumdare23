@@ -15,7 +15,7 @@ import java.util.Random;
  * A home-world to defend
  */
 public class Planet extends  BaseEntity {
-    private double mass_kg = 100000000000000000.0;
+    private double mass_kg = 10E18;
     private double radius_m = 1000;
     private final Picture picture;
 
@@ -96,7 +96,7 @@ public class Planet extends  BaseEntity {
 
                 // Calculate color depending on what layer we are in
                 int color;
-                if (     pixelHeight < calculateLayerHeight(rx, ry, 0.15, 0.1, 0.05)) color = mixColor(pixelHeight, 0.05, 0.2, colorCoreBot, colorCoreTop);
+                if (     pixelHeight < calculateLayerHeight(rx, ry, 0.05, 0.03, 0.05)) color = mixColor(pixelHeight, 0.01, 0.1, colorCoreBot, colorCoreTop);
                 else if (pixelHeight < calculateLayerHeight(rx, ry, 0.3, 0.2, 0.15))  color = mixColor(pixelHeight, 0.1, 0.4, colorCenterBot, colorCenterTop);
                 else if (pixelHeight < calculateLayerHeight(rx, ry, 0.45, 0.1, 0.1))  color = mixColor(pixelHeight, 0.3, 0.5, colorCrustBot, colorCrustTop);
                 else if (pixelHeight < calculateLayerHeight(rx, ry, 0.6, 0.03, 0.25)) color = mixColor(pixelHeight, 0.4, 0.63, colorGrassBot, colorGrassTop);

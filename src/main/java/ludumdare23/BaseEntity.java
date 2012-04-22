@@ -29,5 +29,10 @@ public abstract class BaseEntity extends InputListenerAdapter implements Entity 
         return pos;
     }
 
+    @Override
+    public Vec3 velocity() {
+        return velocity;
+    }
+
 
 }

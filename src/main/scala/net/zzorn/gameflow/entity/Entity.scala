@@ -15,6 +15,7 @@ trait Entity extends Updating {
   def getGameMap: GameMap
 
   def pos: Vec3
+  def velocity: Vec3
 
   def draw(g: Graphics2D, screenW: Int, screenH: Int, x: Int, y: Int, scale: Double)
 

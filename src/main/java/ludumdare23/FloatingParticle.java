@@ -16,18 +16,21 @@ public class FloatingParticle extends Entity3D {
     private  Color color;
     private double rad_m=10;
     private double prevSurfaceDist =1;
+    private double airResistanceAmount = 10.0;
     private boolean onSurface=false;
+    private double lifeTimeLeft = 10.0;
 
 
     public double getMass_kg() {
         return mass_kg;
     }
 
-    public FloatingParticle(Planet planet, Vec3 startPos, double radius, Vec3 velocity,double mass_kg, Color color  ){
+    public FloatingParticle(Planet planet, Vec3 startPos, double radius, Vec3 velocity,double mass_kg, Color color, double airResistanceAmount){
         this.planet = planet;
         rad_m = radius;
         this.mass_kg = mass_kg;
         this.color = color;
+        this.airResistanceAmount = airResistanceAmount;
         pos().set(startPos );
         velocity().set(velocity);
 
@@ -49,7 +52,7 @@ public class FloatingParticle extends Entity3D {
             acc.set(planet.pos());
             acc.setMinus(pos());
             double distance=acc.length();
-            if (distance==0) distance=1;
+            if (distance==0) distance=0.001;
 
             double a=((6.67E-11*planet.getMass_kg())/(distance*distance));
             if (distance<planet.getRadius_m()){
@@ -60,11 +63,10 @@ public class FloatingParticle extends Entity3D {
             acc.setMul(a);
 
             // Apply air resistance
-            double airRes=(-1.0/(distance*distance));
+            double airRes = -airResistanceAmount/(distance*distance);
             airResVec.set(velocity());
             airResVec.setMul(airRes);
             acc.setPlus(airResVec);
-
 
 
             velocity().setPlusMul(acc, durationSeconds);
@@ -108,6 +110,12 @@ public class FloatingParticle extends Entity3D {
             normal.setMul(surfaceDist);
             pos().setMinus(normal);
         }
+
+        // Remove when particle is too old
+        lifeTimeLeft -= durationSeconds;
+        if (lifeTimeLeft <= 0) {
+            getGameMap().remove(this);
+        }
     }
 
         @Override
@@ -117,8 +125,6 @@ public class FloatingParticle extends Entity3D {
             else
             g.setColor(color);
             g.fillOval(x-r,y-r,2*r,2*r);
-
-
+            //g.fillRect(x-r,y-r,2*r,2*r);
          }
-
 }

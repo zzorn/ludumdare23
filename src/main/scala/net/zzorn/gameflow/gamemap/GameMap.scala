@@ -15,6 +15,8 @@ import net.zzorn.gameflow.{BaseFacet, Facet}
 class GameMap(var camera: Camera = new StationaryCamera()) extends BaseFacet {
 
   private val _entities: ArrayList[Entity] = new ArrayList[Entity]()
+  private val _entitiesToAdd: ArrayList[Entity] = new ArrayList[Entity]()
+  private val _entitiesToRemove: ArrayList[Entity] = new ArrayList[Entity]()
   private val unmodifiableList: List[Entity] = Collections.unmodifiableList(_entities)
   private val screenPos = Vec2()
   private val worldPos = Vec3()
@@ -22,6 +24,23 @@ class GameMap(var camera: Camera = new StationaryCamera()) extends BaseFacet {
   def entities: java.util.List[Entity] = unmodifiableList
 
   override final def update(seconds: Double) {
+    // Add any entities to add
+    _entitiesToAdd foreach {entity =>
+      _entities.add(entity)
+      entity.setGameMap(this)
+      onEntityAdded(entity)
+    }
+    _entitiesToAdd.clear()
+
+    // Remove any entities to remove
+    _entitiesToRemove foreach {entity =>
+      onEntityRemoved(entity)
+      entity.setGameMap(null)
+      _entities.remove(entity)
+    }
+    _entitiesToRemove.clear()
+
+    // Update entities, map, and camera
     _entities foreach {e => e.update(seconds)}
     updateMap(seconds)
     camera.update(seconds)
@@ -32,15 +51,13 @@ class GameMap(var camera: Camera = new StationaryCamera()) extends BaseFacet {
   }
 
   final def add(entity: Entity) {
-    _entities.add(entity)
-    entity.setGameMap(this)
-    onEntityAdded(entity)
+    _entitiesToAdd.add(entity)
+    _entitiesToRemove.remove(entity)
   }
 
   final def remove(entity: Entity) {
-    onEntityRemoved(entity)
-    entity.setGameMap(null)
-    _entities.remove(entity)
+    _entitiesToRemove.add(entity)
+    _entitiesToAdd.remove(entity)
   }
 
   protected def updateMap(seconds: Double) {}
