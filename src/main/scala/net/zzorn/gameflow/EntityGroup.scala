@@ -20,7 +20,7 @@ class EntityGroup[T <: Entity]() extends Facet {
   private val _entitiesToRemove: HashSet[Entity] = new HashSet[Entity]()
   private val unmodifiableList: java.util.List[T] = Collections.unmodifiableList(_entities)
 
-  private val collisionHandlers: HashMap[CollisionHandler[_ <: T, _ <: Entity], EntityGroup[_ <: Entity]] = new HashMap[CollisionHandler[_ <: T, _ <: Entity], EntityGroup[_ <: Entity]]()
+  private val collisionHandlers: HashSet[(EntityGroup[_ <: Entity], CollisionHandler[_ <: T, _ <: Entity])] = new HashSet[(EntityGroup[_ <: Entity], CollisionHandler[_ <: T, _ <: Entity])]()
   def entities: java.util.List[T] = unmodifiableList
 
   final def add(entity: T) {
@@ -57,11 +57,11 @@ class EntityGroup[T <: Entity]() extends Facet {
   }
 
   def onCollideWith(otherGroup: EntityGroup[_ <: Entity], handler: CollisionHandler[_ <: T, _ <: Entity]) {
-    collisionHandlers.put(handler, otherGroup)
+    collisionHandlers.add((otherGroup, handler))
   }
 
-  def removeCollisionHandler(handler: CollisionHandler[_ <: T, _ <: Entity]) {
-    collisionHandlers.remove(handler)
+  def removeCollisionHandler(otherGroup: EntityGroup[_ <: Entity], handler: CollisionHandler[_ <: T, _ <: Entity]) {
+    collisionHandlers.remove((otherGroup, handler))
   }
 
   def init() {}
@@ -91,8 +91,8 @@ class EntityGroup[T <: Entity]() extends Facet {
     }
 
     // Handle collisions
-    collisionHandlers.entrySet() foreach { entry =>
-      handleCollisions(entry.getValue, entry.getKey)
+    collisionHandlers foreach {groupAndHandler =>
+      handleCollisions(groupAndHandler._1, groupAndHandler._2)
     }
   }
 

@@ -96,5 +96,8 @@ public class PlayerShip extends Ship {
     }
 
 
-
+    @Override
+    protected void onDestroyed() {
+        remove();
+    }
 }

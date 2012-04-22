@@ -64,8 +64,8 @@ public class Game extends GameBase {
 
         // Create planet
         Planet planet = new Planet();
-        planet.setMaxHitPoints(10000);
-        planet.setHitPoints(10000);
+        planet.setMaxHitPoints(4000);
+        planet.setHitPoints(4000);
         planetGroup.add(planet);
 
         // Create players ship
