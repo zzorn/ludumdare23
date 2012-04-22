@@ -85,7 +85,7 @@ public class Weapon {
         startVel.setMul(shotSpeed);
         startVel.setPlus(host.velocity());
 
-        return new Particle(planet, host.pos(), shotSize, startVel, shotMass, shotColor, shotAirResistance, shotDamage);
+        return new Particle(planet, host.pos(), shotSize, startVel, shotMass, shotColor, shotAirResistance, shotDamage, 8);
     }
 
 }

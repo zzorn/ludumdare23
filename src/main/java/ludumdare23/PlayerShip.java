@@ -16,6 +16,8 @@ public class PlayerShip extends Ship {
     private int downKey  = KeyEvent.VK_S;
     private int leftKey  = KeyEvent.VK_A;
     private int rightKey = KeyEvent.VK_D;
+    private int clockwiseKey  = KeyEvent.VK_C;
+    private int counterclockwiseKey = KeyEvent.VK_X;
     private int fireKey  = KeyEvent.VK_SPACE;
     private MouseButton fireButton = LeftMouseButton$.MODULE$;
 
@@ -36,7 +38,7 @@ public class PlayerShip extends Ship {
     public PlayerShip(Game game, Planet planet, Picture picture) {
         this.game = game;
         this.picture = picture;
-        distance = planet.getRadius()+200;
+        distance = planet.getRadius()+400;
         this.planet = planet;
         pos().setX(planet.pos().x());
         pos().setY(-distance + planet.pos().y());
@@ -74,37 +76,45 @@ public class PlayerShip extends Ship {
     public void onKeysUpdated(InputStatus inputStatus, double durationSeconds) {
         angAcc=0;
 
+        boolean clockwise = false;
+        boolean counterClockwise = false;
+
         if (inputStatus.isKeyHeld(rightKey)) {
-            if (angle>=270) angAcc += maxAngAcc;
-            if (angle>=0 && angle<90) angAcc += -maxAngAcc;
-            if (angle>=90 && angle<180) angAcc += -maxAngAcc;
-            if (angle>=180 && angle<270) angAcc += maxAngAcc;
+            if (angle>=270) clockwise = true;
+            if (angle>=0 && angle<90) counterClockwise = true;
+            if (angle>=90 && angle<180) counterClockwise = true;
+            if (angle>=180 && angle<270) clockwise = true;
         }
 
         if (inputStatus.isKeyHeld(leftKey))  {
-            if (angle>=270) angAcc += -maxAngAcc;
-            if (angle>=0 && angle<90) angAcc += maxAngAcc;
-            if (angle>=90 && angle<180) angAcc += maxAngAcc;
-            if (angle>=180 && angle<270) angAcc += -maxAngAcc;
+            if (angle>=270) counterClockwise = true;
+            if (angle>=0 && angle<90) clockwise = true;
+            if (angle>=90 && angle<180) clockwise = true;
+            if (angle>=180 && angle<270) counterClockwise = true;
 
         }
 
         if (inputStatus.isKeyHeld(upKey))  {
-            if (angle>=270) angAcc += -maxAngAcc;
-            if (angle>=0 && angle<90) angAcc += -maxAngAcc;
-            if (angle>=90 && angle<180) angAcc += maxAngAcc;
-            if (angle>=180 && angle<270) angAcc += maxAngAcc;
+            if (angle>=270) counterClockwise = true;
+            if (angle>=0 && angle<90) counterClockwise = true;
+            if (angle>=90 && angle<180) clockwise = true;
+            if (angle>=180 && angle<270) clockwise = true;
 
         }
-
 
         if (inputStatus.isKeyHeld(downKey))  {
-            if (angle>=270) angAcc += maxAngAcc;
-            if (angle>=0 && angle<90) angAcc += maxAngAcc;
-            if (angle>=90 && angle<180) angAcc += -maxAngAcc;
-            if (angle>=180 && angle<270) angAcc += -maxAngAcc;
+            if (angle>=270) clockwise = true;
+            if (angle>=0 && angle<90) clockwise = true;
+            if (angle>=90 && angle<180) counterClockwise = true;
+            if (angle>=180 && angle<270) counterClockwise = true;
 
         }
+
+        if (inputStatus.isKeyHeld(clockwiseKey)) clockwise = true;
+        if (inputStatus.isKeyHeld(counterclockwiseKey)) counterClockwise = true;
+
+        if (clockwise)        angAcc += maxAngAcc;
+        if (counterClockwise) angAcc -= maxAngAcc;
 
         firePressed = inputStatus.isKeyHeld(fireKey) || inputStatus.isMouseButtonHeld(fireButton);
     }

@@ -8,6 +8,7 @@ import net.zzorn.gameflow.entity.Entity;
 import net.zzorn.gameflow.input.InputListenerAdapter;
 import net.zzorn.gameflow.input.InputStatus;
 import net.zzorn.gameflow.picture.Picture;
+import net.zzorn.utils.ColorUtils$;
 import net.zzorn.utils.Vec3;
 
 import java.awt.*;
@@ -19,25 +20,32 @@ import java.util.Random;
  */
 public class Game extends GameBase {
 
-    private static final CollisionHandler<Particle, Damageable> BULLET_COLLISION_HANDLER = new CollisionHandler<Particle, Damageable>(){
-        public void onCollision(Particle bullet, Damageable damageable) {
-            damageable.damage(bullet.getDamage());
-            System.out.println("HP Left " + damageable + ": " + damageable.getHitPoints());
-            bullet.remove();
-        }
-    };
 
     private EntityGroup<EnemyShip>  enemyGroup         = new EntityGroup<EnemyShip>();
     private EntityGroup<PlayerShip> playerGroup        = new EntityGroup<PlayerShip>();
     private EntityGroup<Particle>   enemyBulletGroup   = new EntityGroup<Particle>();
     private EntityGroup<Particle>   playerBulletGroup  = new EntityGroup<Particle>();
     private EntityGroup<Planet>     planetGroup        = new EntityGroup<Planet>();
+    private EntityGroup<Particle>   effectsGroup       = new EntityGroup<Particle>();
+
+    Planet planet = new Planet();
 
     private Random random = new Random(42);
 
+    private final CollisionHandler<Particle, Damageable> BULLET_COLLISION_HANDLER = new CollisionHandler<Particle, Damageable>(){
+        public void onCollision(Particle bullet, Damageable damageable) {
+            boolean wasDestroyed = damageable.isDestroyed();
+            damageable.damage(bullet.getDamage());
+            bullet.remove();
+
+            if (!wasDestroyed && damageable.isDestroyed()) {
+                makeExplosionParticles(planet, effectsGroup, damageable.getMaxHitPoints(), damageable.pos(), damageable.velocity());
+            }
+        }
+    };
 
     public Game() {
-        super("LD23", 300.0, 1000, 800, "", null);
+        super("LD23", 300.0, 800, 600, "", null);
 
     }
 
@@ -54,6 +62,7 @@ public class Game extends GameBase {
 
         // Setup entity groups (in drawing order)
         addFacet(planetGroup);
+        addFacet(effectsGroup);
         addFacet(enemyBulletGroup);
         addFacet(playerBulletGroup);
         addFacet(enemyGroup);
@@ -63,7 +72,6 @@ public class Game extends GameBase {
         setCursor("images/kursor.png");
 
         // Create planet
-        Planet planet = new Planet();
         planet.setMaxHitPoints(4000);
         planet.setHitPoints(4000);
         planetGroup.add(planet);
@@ -77,7 +85,7 @@ public class Game extends GameBase {
         playerGroup.add(player);
 
         // Create a camera that tracks the player
-        final TrackingCamera camera = new TrackingCamera(player , 0, 1.5);
+        final TrackingCamera camera = new TrackingCamera(player , 0, 3);
         camera.setCameraScale(0.4);
         setCamera(camera);
 
@@ -157,5 +165,33 @@ public class Game extends GameBase {
         randomPos.setMul(area);
         randomPos.setZ(0);
         return randomPos;
+    }
+
+    private Color createRandomColor(double hue, double hueVar, double sat, double satVar, double lum, double lumVar) {
+        double h = random.nextGaussian() * hueVar + hue;
+        double s = random.nextGaussian() * satVar + sat;
+        double l = random.nextGaussian() * lumVar + lum;
+
+        return new Color(ColorUtils$.MODULE$.HSLtoRGB(h, s, l, 1), false);
+    }
+
+
+    private void makeExplosionParticles(Planet planet, EntityGroup<Particle> group, double size, Vec3 pos, Vec3 velocity) {
+        if (size > 0) {
+            double intensity = size / (size + 1.0);
+            double amount  = gaussianValue(size*2, 0.2, 3, 25);
+            for (int i = 0; i < (int) amount; i++) {
+                double radius = gaussianValue(intensity *20, 0.3, 1, 100);
+                double mass = gaussianValue(5, 0.3, 0.1, 100);
+                double lifeTime = gaussianValue(3, 0.8, 0.1, 10);
+                //double damage = gaussianValue(intensity, 0.2, 0, 100);
+                double damage = 0;
+                double airDrag = gaussianValue(10000, 1.0, 0.1, 100000);
+                Vec3 vel = createRandomVec(gaussianValue(intensity *300, 0.8, 1, 2000));
+                vel.setPlus(velocity);
+                Color color = createRandomColor(0.1, 0.02, 0.3, 0.3, 0.4, 0.1);
+                group.add(new Particle(planet, pos, radius, vel, mass, color, airDrag, damage, lifeTime));
+            }
+        }
     }
 }
