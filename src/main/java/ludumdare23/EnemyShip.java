@@ -16,14 +16,20 @@ public class EnemyShip extends Ship {
     private double maxThrust;
     private double maxSpeed;
     private boolean onSurface=false;
+    // distance from target
+    private double distance = 200;
+    // brake multiply
+    private double brake =1;
 
 
-    public EnemyShip(Planet planet, Entity target, Picture picture, Vec3 startPos, Vec3 startVelocity, double maxThrust, double maxSpeed) {
+    public EnemyShip(Planet planet, Entity target, Picture picture, Vec3 startPos, Vec3 startVelocity, double maxThrust, double maxSpeed, double distance, double maxBrakeAcc) {
         this.planet = planet;
         this.target = target;
         this.picture = picture;
         this.maxThrust = maxThrust;
         this.maxSpeed = maxSpeed;
+        this.distance = distance;
+        this.brake = -maxBrakeAcc;
         pos.set(startPos);
         velocity.set(startVelocity);
 
@@ -43,11 +49,16 @@ public class EnemyShip extends Ship {
             Vec3 normal=planet.normalAt(pos());
             normal.setMul(surfaceDist);
             pos().setMinus(normal);
+
         }
+
+
+
+
         if (!onSurface){
             // Accelerate towards the target
             double distanceToTarget=pos().distance(target.pos());
-            if (distanceToTarget>500){
+            if (distanceToTarget>distance){
                 acc.set(target.pos());
                 acc.setMinus(pos);
                 acc.setNormalized(); // Now we have direction towards player in acc, multiply with our thrust to get actual acceleration
@@ -57,10 +68,17 @@ public class EnemyShip extends Ship {
                 acc.set(target.pos());
                 acc.setMinus(pos);
                 acc.setNormalized(); // Now we have direction towards player in acc, multiply with our thrust to get actual acceleration
-                acc.setMul(-2*maxThrust);
+                acc.setMul(brake*maxThrust);
             }
 
+            if (surfaceDist<=100) {
+                //onSurface=true;
+                Vec3 normal=planet.normalAt(pos());
+                normal.setMul(2*maxThrust);
+                acc.setPlus(normal);
 
+
+            }
             // Update velocity based on acceleration
             velocity.setPlusMul(acc, durationSeconds);
 
