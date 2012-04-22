@@ -5,10 +5,12 @@ import net.zzorn.utils.Vec3;
 /**
  *
  */
-public abstract class Ship extends BaseEntity {
+public abstract class Ship extends BaseEntity implements Damageable {
 
     private Weapon weapon = null;
+    private double radius = 10;
 
+    public double getRadius() { return radius; }
     public Weapon getWeapon() { return weapon; }
 
     public void setWeapon(Weapon weapon) {
@@ -18,7 +20,6 @@ public abstract class Ship extends BaseEntity {
     }
 
     public void fire(Vec3 target) {
-        System.out.println("Try to pew");
         if (weapon != null) weapon.fire(target);
     }
 

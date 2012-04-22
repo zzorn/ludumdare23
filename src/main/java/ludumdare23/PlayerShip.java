@@ -1,7 +1,5 @@
 package ludumdare23;
 
-import net.zzorn.gameflow.entity.Entity;
-import net.zzorn.gameflow.gamemap.GameMap;
 import net.zzorn.gameflow.picture.Picture;
 import net.zzorn.gameflow.input.*;
 import net.zzorn.utils.Vec3;
@@ -14,23 +12,31 @@ import java.awt.event.KeyEvent;
  */
 public class PlayerShip extends Ship {
 
-    private int upKey    = KeyEvent.VK_UP;
-    private int downKey  = KeyEvent.VK_DOWN;
-    private int leftKey  = KeyEvent.VK_LEFT;
-    private int rightKey = KeyEvent.VK_RIGHT;
+    private int upKey    = KeyEvent.VK_W;
+    private int downKey  = KeyEvent.VK_S;
+    private int leftKey  = KeyEvent.VK_A;
+    private int rightKey = KeyEvent.VK_D;
+    private int fireKey  = KeyEvent.VK_SPACE;
+    private MouseButton fireButton = LeftMouseButton$.MODULE$;
 
     private final Planet planet;
     private double distance = 0;
     private double angle = 270;
     private final static double DEGREES_TO_RADIANS= 2*Math.PI/360;
     private double angVelosity=0;
+    private double maxAngAcc=200;
+    private double maxAngVel=100;
     private double angAcc =0;
-    private double angSlow = 0.98 ;
+    private double angSlow = 3;
+    private final Game game;
     private final Picture picture;
+    private boolean firePressed = false;
+    private Vec3 target = new Vec3(0,0,0);
 
-    public PlayerShip(Planet planet, Picture picture) {
+    public PlayerShip(Game game, Planet planet, Picture picture) {
+        this.game = game;
         this.picture = picture;
-        distance = planet.getRadius_m()+50;
+        distance = planet.getRadius()+200;
         this.planet = planet;
         pos().setX(planet.pos().x());
         pos().setY(-distance + planet.pos().y());
@@ -40,35 +46,48 @@ public class PlayerShip extends Ship {
     @Override
     protected void onUpdate(double durationSeconds) {
         angVelosity += angAcc * durationSeconds;
-        angVelosity *= angSlow;
-        if (angVelosity>=100) {
-            angVelosity=100;
-            angAcc=0;
+        angVelosity *= Math.max(0, 1.0 - angSlow * durationSeconds);
+
+        if (angVelosity>=maxAngVel) {
+            angVelosity=maxAngVel;
+            //angAcc=0;
         }
-        if (angVelosity<=-100) {
-            angVelosity=-100;
-            angAcc= 0;
+        if (angVelosity<=-maxAngVel) {
+            angVelosity=-maxAngVel;
+            //angAcc= 0;
         }
         angle += angVelosity*durationSeconds;
 
-        if (angle >= 360) angle = angle - 360;
-        if (angle < 0) angle = angle + 360;
+        if (angle >= 360) angle -= 360;
+        if (angle < 0) angle += 360;
 
         pos().setX(distance * Math.cos(angle * DEGREES_TO_RADIANS));
         pos().setY(distance * Math.sin(angle * DEGREES_TO_RADIANS));
+
+        if (firePressed && getWeapon() != null && getWeapon().isReadyToFire()) {
+            getWeapon().fire(target);
+        }
+
     }
 
 
     public void onKeysUpdated(InputStatus inputStatus, double durationSeconds) {
         angAcc=0;
 
-
         if (inputStatus.isKeyHeld(rightKey)) {
-            angAcc += 70;
+            angAcc += maxAngAcc;
         }
         if (inputStatus.isKeyHeld(leftKey))  {
-            angAcc += -70;
+            angAcc += -maxAngAcc;
         }
+
+        firePressed = inputStatus.isKeyHeld(fireKey) || inputStatus.isMouseButtonHeld(fireButton);
+    }
+
+    @Override
+    public void onMouseMoved(int x, int y, InputStatus inputStatus, double durationSeconds) {
+        // Update targeted spot
+        game.getCamera().screenPosToWorldPos(x, y, target);
     }
 
     @Override

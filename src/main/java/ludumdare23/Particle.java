@@ -8,29 +8,40 @@ import java.awt.*;
 /**
  * A particle thrown up by an explosion
  */
-public class FloatingParticle extends Entity3D {
+public class Particle extends Entity3D {
     private Vec3 acc=new Vec3(0,0,0);
     private Vec3 airResVec=new Vec3 (0,0,0);
     private double mass_kg=1;
     private final Planet planet;
     private  Color color;
-    private double rad_m=10;
+    private double radius =10;
     private double prevSurfaceDist =1;
     private double airResistanceAmount = 10.0;
     private boolean onSurface=false;
     private double lifeTimeLeft = 10.0;
+    private final Color deadColor = new Color(152, 68, 9);
+    private double damage = 0;
 
 
     public double getMass_kg() {
         return mass_kg;
     }
 
-    public FloatingParticle(Planet planet, Vec3 startPos, double radius, Vec3 velocity,double mass_kg, Color color, double airResistanceAmount){
+    public double getRadius() {
+        return radius;
+    }
+
+    public double getDamage() {
+        return damage;
+    }
+
+    public Particle(Planet planet, Vec3 startPos, double radius, Vec3 velocity, double mass_kg, Color color, double airResistanceAmount, double damage){
         this.planet = planet;
-        rad_m = radius;
+        this.radius = radius;
         this.mass_kg = mass_kg;
         this.color = color;
         this.airResistanceAmount = airResistanceAmount;
+        this.damage = damage;
         pos().set(startPos );
         velocity().set(velocity);
 
@@ -38,7 +49,7 @@ public class FloatingParticle extends Entity3D {
 
     @Override
     public void update(double durationSeconds) {
-        double surfaceDist = planet.getSurfaceDist(pos(), rad_m);
+        double surfaceDist = planet.getSurfaceDist(pos(), radius);
 
         if (velocity().length()< 5 && surfaceDist<=10){
             onSurface=true;
@@ -55,8 +66,8 @@ public class FloatingParticle extends Entity3D {
             if (distance==0) distance=0.001;
 
             double a=((6.67E-11*planet.getMass_kg())/(distance*distance));
-            if (distance<planet.getRadius_m()){
-                a=((6.67E-11*distance)/(planet.getRadius_m()*planet.getRadius_m()));
+            if (distance<planet.getRadius()){
+                a=((6.67E-11*distance)/(planet.getRadius()*planet.getRadius()));
             }
 
             acc.setNormalized();
@@ -89,7 +100,7 @@ public class FloatingParticle extends Entity3D {
                 Vec3 v=planet.normalAt(pos());
                 double angle = v.angleBetween(velocity());
                 if (((0.5)*mass_kg* velocity().length()* velocity().length())>100000) {
-                    this.color = Color.BLACK;
+                    this.color = deadColor;
                     velocity().zero();
                 }
                 else
@@ -114,13 +125,13 @@ public class FloatingParticle extends Entity3D {
         // Remove when particle is too old
         lifeTimeLeft -= durationSeconds;
         if (lifeTimeLeft <= 0) {
-            getGameMap().remove(this);
+            getGroup().remove(this);
         }
     }
 
         @Override
         public void draw(Graphics2D g, int screenW, int screenH, int x, int y, double scale) {
-            int r= (int) (rad_m * scale);
+            int r= (int) (radius * scale);
             if (onSurface && color != Color.BLACK )g.setColor(Color.RED);
             else
             g.setColor(color);

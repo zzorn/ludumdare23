@@ -62,5 +62,14 @@ class RawImage(val width: Int, val height: Int) {
     buf
   }
 
+  def createBufferedImage(w: Int, h: Int): BufferedImage = {
+    val buf = ImageUtils.createScreenCompatibleImage(w, h, Transparency.BITMASK)
+
+    _image.flush()
+    buf.getGraphics.drawImage(_image, 0, 0, w, h, null)
+
+    buf
+  }
+
 
 }

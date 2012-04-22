@@ -3,6 +3,7 @@ package ludumdare23;
 import net.zzorn.gameflow.entity.Entity;
 import net.zzorn.gameflow.picture.BufferedImagePicture;
 import net.zzorn.gameflow.picture.Picture;
+import net.zzorn.gameflow.picture.ScaledPicture;
 import net.zzorn.utils.ColorUtils$;
 import net.zzorn.utils.RawImage;
 import net.zzorn.utils.SimplexNoise$;
@@ -20,10 +21,10 @@ public class Planet extends  BaseEntity {
     private final Picture picture;
 
     public Planet() {
-        picture = createPicture(42, (int)radius_m);
+        picture = createPicture(42, (int)radius_m*2);
     }
 
-    public double getRadius_m() {
+    public double getRadius() {
         return radius_m;
     }
 
@@ -40,7 +41,7 @@ public class Planet extends  BaseEntity {
     public void draw(Graphics2D g, int screenW, int screenH, int x, int y, double scale) {
         g.setColor(Color.GREEN);
         int r = (int) (radius_m * scale);
-        g.fillOval(x - r, y - r, 2 * r, 2 * r);
+        g.fillOval(x-r, y-r, 2*r, 2*r);
 
         picture.drawCentered(g, x, y, scale);
     }
@@ -73,7 +74,8 @@ public class Planet extends  BaseEntity {
     private Picture createPicture(long seed, int size) {
         Random random = new Random(seed);
 
-        RawImage rawImage = new RawImage(size, size);
+        int rawImageSize = size / 8;
+        RawImage rawImage = new RawImage(rawImageSize , rawImageSize );
 
         int colorCoreBot = ColorUtils$.MODULE$.HSLtoRGB(0.15, 0.6, 0.4, 1.0);
         int colorCoreTop = ColorUtils$.MODULE$.HSLtoRGB(0.01, 0.5, 0.3, 1.0);
@@ -88,15 +90,15 @@ public class Planet extends  BaseEntity {
         int colorSpaceTop = ColorUtils$.MODULE$.HSLtoRGB(0.7, 0, 0, 0.0);
 
         int i =0;
-        for (int y = 0; y < size; y++) {
-            for (int x = 0; x < size; x++) {
-                double rx = 2.0 * x / size - 1.0;
-                double ry = 2.0 * y / size - 1.0;
+        for (int y = 0; y < rawImageSize; y++) {
+            for (int x = 0; x < rawImageSize; x++) {
+                double rx = 2.0 * x / rawImageSize - 1.0;
+                double ry = 2.0 * y / rawImageSize - 1.0;
                 double pixelHeight = r2(rx, ry);
 
                 // Calculate color depending on what layer we are in
                 int color;
-                if (     pixelHeight < calculateLayerHeight(rx, ry, 0.05, 0.03, 0.05)) color = mixColor(pixelHeight, 0.01, 0.1, colorCoreBot, colorCoreTop);
+                if (     pixelHeight < calculateLayerHeight(rx, ry, 0.1, 0.03, 0.05)) color = mixColor(pixelHeight, 0.01, 0.1, colorCoreBot, colorCoreTop);
                 else if (pixelHeight < calculateLayerHeight(rx, ry, 0.3, 0.2, 0.15))  color = mixColor(pixelHeight, 0.1, 0.4, colorCenterBot, colorCenterTop);
                 else if (pixelHeight < calculateLayerHeight(rx, ry, 0.45, 0.1, 0.1))  color = mixColor(pixelHeight, 0.3, 0.5, colorCrustBot, colorCrustTop);
                 else if (pixelHeight < calculateLayerHeight(rx, ry, 0.6, 0.03, 0.25)) color = mixColor(pixelHeight, 0.4, 0.63, colorGrassBot, colorGrassTop);
@@ -109,7 +111,7 @@ public class Planet extends  BaseEntity {
             }
         }
 
-        return new BufferedImagePicture(rawImage.createBufferedImage());
+        return new ScaledPicture(new BufferedImagePicture(rawImage.createBufferedImage()), 8*1.33);
     }
 
     private double calculateLayerHeight(double rx, double ry, double baseHeight, double heightVariation, double detailSize) {

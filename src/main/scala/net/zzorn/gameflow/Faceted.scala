@@ -1,5 +1,6 @@
 package net.zzorn.gameflow
 
+import camera.Camera
 import java.awt.Graphics2D
 import java.util.ArrayList
 import scala.collection.JavaConversions._
@@ -55,9 +56,10 @@ class FacetManager extends Facet {
     }
   }
 
-  def render(g: Graphics2D, screenW: Int, screenH: Int) {
+
+  def render(g: Graphics2D, camera: Camera) {
     facets foreach {facet =>
-      facet.render(g, screenW, screenH)
+      facet.render(g, camera)
     }
   }
 

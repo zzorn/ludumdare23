@@ -1,6 +1,6 @@
 package ludumdare23;
 
-import net.zzorn.gameflow.Facet;
+import net.zzorn.gameflow.EntityGroup;
 import net.zzorn.gameflow.entity.Entity;
 import net.zzorn.utils.Vec3;
 
@@ -13,6 +13,7 @@ import java.awt.*;
 public class Weapon {
 
     private final Planet planet;
+    private final EntityGroup<Particle> bulletGroup;
     private Entity host = null;
     private double coolDownTime = 0.1;
     private double coolDownLeft = 0.0;
@@ -20,6 +21,7 @@ public class Weapon {
     private double shotSize = 5;
     private double shotSpeed = 100;
     private double shotMass = 10;
+    private double shotDamage = 5;
     private int clipSize = 10;
     private int clipLeft = clipSize;
     private double clipReloadTime = 3;
@@ -27,8 +29,9 @@ public class Weapon {
     private Color shotColor = Color.ORANGE;
     private double totalSeconds = 0;
 
-    public Weapon(Planet planet, double coolDownTime, double shotSize, double shotSpeed, double shotMass, Color shotColor, int clipSize, double clipReloadTime, double shotAirResistance) {
+    public Weapon(Planet planet, EntityGroup<Particle> bulletGroup, double coolDownTime, double shotSize, double shotSpeed, double shotMass, Color shotColor, int clipSize, double clipReloadTime, double shotAirResistance, double shotDamage) {
         this.planet = planet;
+        this.bulletGroup = bulletGroup;
         this.coolDownTime = coolDownTime;
         this.shotSize = shotSize;
         this.shotSpeed = shotSpeed;
@@ -37,6 +40,7 @@ public class Weapon {
         this.clipSize = clipSize;
         this.clipReloadTime = clipReloadTime;
         this.shotAirResistance = shotAirResistance;
+        this.shotDamage = shotDamage;
     }
 
     public Entity getHost() { return host; }
@@ -44,7 +48,7 @@ public class Weapon {
 
     public void fire(Vec3 target) {
         if (host != null && isReadyToFire()) {
-            host.getGameMap().add(createShot(target));
+            bulletGroup.add(createShot(target));
             coolDownLeft = coolDownTime;
             clipLeft--;
             if (clipLeft <= 0) {
@@ -66,14 +70,13 @@ public class Weapon {
         return coolDownLeft <= 0 && clipReloadTimeLeft <= 0;
     }
 
-    private Entity createShot(Vec3 target) {
+    private Particle createShot(Vec3 target) {
         Vec3 startVel = Vec3.fromTo(host.pos(), target);
         startVel.setNormalized();
         startVel.setMul(shotSpeed);
         startVel.setPlus(host.velocity());
 
-        FloatingParticle shot = new FloatingParticle(planet, host.pos(), shotSize, startVel, shotMass, shotColor, shotAirResistance);
-        return shot;
+        return new Particle(planet, host.pos(), shotSize, startVel, shotMass, shotColor, shotAirResistance, shotDamage);
     }
 
 }

@@ -1,22 +1,23 @@
 package net.zzorn.gameflow.picture
 
-import java.awt.Graphics2D
+import java.awt.{Image, Graphics2D}
+
 
 /**
  * Something that can be rendered to a graphics.
  */
 trait Picture {
 
-  def w: Int
-  def h: Int
+  def w: Double
+  def h: Double
 
-  def draw(g: Graphics2D, x: Int, y: Int)
+  def draw(g: Graphics2D, x: Double, y: Double)
 
-  def drawCentered(g: Graphics2D, x: Int, y: Int, scale: Double = 1.0) {
-    draw(g, x - w/2, y - h/2)
+  def draw(g: Graphics2D, x: Double, y: Double, scale: Double, center: Boolean )
 
-    // TODO: Scale draw
+  def drawCentered(g: Graphics2D, x: Double, y: Double, scale: Double = 1.0) {
+    draw(g, x, y, scale, true)
   }
 
-
+  def getImage: Image
 }

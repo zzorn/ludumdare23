@@ -11,6 +11,9 @@ trait Camera {
 
   private val tempPos = Vec3()
 
+  var screenW: Int = 0
+  var screenH: Int = 0
+
   var cameraScale: Double = 1.0
   val cameraPos: Vec3 = Vec3()
 
@@ -18,9 +21,26 @@ trait Camera {
     cameraScale = scale
   }
 
+  def setScreenSize(w: Int, h: Int) {
+    screenW = w
+    screenH = h
+  }
+
   def update(seconds: Double) {}
 
-  def worldPosToScreenPos(worldPos: Vec3, screenPosOut: Vec2, screenW: Int, screenH: Int) {
+  def screenPosToWorldPos(screenX: Double, screenY: Double, worldPosOut: Vec3) {
+    tempPos.set(screenX, screenY, 0)
+    tempPos.x -= screenW / 2
+    tempPos.y -= screenH / 2
+    tempPos /= cameraScale
+    tempPos += cameraPos
+
+    worldPosOut.x = tempPos.x
+    worldPosOut.y = tempPos.y
+    worldPosOut.z = 0
+  }
+
+  def worldPosToScreenPos(worldPos: Vec3, screenPosOut: Vec2) {
     tempPos.set(worldPos)
     tempPos -= cameraPos
     tempPos *= cameraScale

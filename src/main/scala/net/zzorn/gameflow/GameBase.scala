@@ -1,10 +1,13 @@
 package net.zzorn.gameflow
 
+import camera.{StationaryCamera, Camera}
 import input.InputHandler
 import net.zzorn.utils._
-import picture.PictureManager
 import net.zzorn.gameflow.GameBase._
-import java.awt.{Toolkit, Graphics2D, Color}
+import picture.{Picture, PictureManager}
+import java.awt.image.BufferedImage
+import java.awt._
+import java.util.List
 
 /**
  * Extend this in an object, and implement update, render, and optionally init and shutdown.
@@ -15,7 +18,8 @@ class GameBase(title: String = "GameFlow",
                initialTargetFps: Double = 200.0,
                defaultWidth: Int = 800,
                defaultHeight: Int = 600,
-               picturePath: String = "") {
+               picturePath: String = "",
+               initialCamera: Camera = new StationaryCamera()) {
 
   final private val SecondsToNanoseconds: Double = 1000000000.0
   final private val NanosecondsToSeconds: Double = 1.0 / SecondsToNanoseconds
@@ -31,6 +35,16 @@ class GameBase(title: String = "GameFlow",
   final private val _inputHandler: InputHandler = new InputHandler()
 
   private final val facetManager: FacetManager = new FacetManager()
+  private final var clearBackground = true
+  private final var backgroundColor: Color = Color.BLACK
+
+  private var camera: Camera = initialCamera
+
+  def getCamera: Camera = camera
+  def setCamera(camera: Camera) {
+    this.camera = camera
+    if (canvas != null) this.camera.setScreenSize(canvas.getWidth, canvas.getHeight)
+  }
 
   targetFps = initialTargetFps
 
@@ -72,6 +86,7 @@ class GameBase(title: String = "GameFlow",
 
       // Setup screen
       createScreen()
+      if (camera != null) camera.setScreenSize(canvas.getWidth, canvas.getHeight)
 
       // Setup keyboard input
       addFacet(_inputHandler)
@@ -82,14 +97,23 @@ class GameBase(title: String = "GameFlow",
       while (running) {
         var duration = tickClock()
 
+        if (camera != null) camera.setScreenSize(canvas.getWidth, canvas.getHeight)
+        camera.update(duration)
         facetManager.update(duration)
         update(duration)
 
         // Get surface to render on
         var surface: Graphics2D = canvas.acceleratedSurface
 
-        facetManager.render(surface, canvas.getWidth, canvas.getHeight)
-        render(surface, canvas.getWidth, canvas.getHeight)
+        if (clearBackground) {
+          // Fill with background color
+          surface.setColor(backgroundColor)
+          surface.fillRect(0, 0, camera.screenW, camera.screenH)
+        }
+
+        // Render all facets
+        facetManager.render(surface, camera)
+        render(surface, camera)
 
         // We'll need to manually dispose the graphics
         surface.dispose()
@@ -110,6 +134,7 @@ class GameBase(title: String = "GameFlow",
     running = false
   }
 
+
   /**
    * Called before the main loop starts, after the screen has been created.
    */
@@ -125,7 +150,7 @@ class GameBase(title: String = "GameFlow",
    * Render the game contents to the specified screen raster.
    * @param screen the graphics to render to.
    */
-  protected def render(screen: Graphics2D, screenW: Int, screenH: Int) {}
+  protected def render(screen: Graphics2D, camera: Camera) {}
 
   /**
    * Called after the mainloop has terminated, and before the program exits.
@@ -171,5 +196,19 @@ class GameBase(title: String = "GameFlow",
     duration
   }
 
+
+  def setCursor(imageName: String) {
+    var picture: Picture = pictureStore.get(imageName)
+    setCursor(picture, 0, 0)
+  }
+
+  def setCursor(imageName: String, hotSpotX: Int, hotSpotY: Int) {
+    setCursor(pictureStore.get(imageName), hotSpotX, hotSpotY)
+  }
+
+  def setCursor(picture: Picture, hotSpotX: Int, hotSpotY: Int) {
+    val cursor = Toolkit.getDefaultToolkit.createCustomCursor(picture.getImage, new Point(hotSpotX, hotSpotX), "Custom cursor");
+    _canvas.setCursor(cursor);
+  }
 
 }

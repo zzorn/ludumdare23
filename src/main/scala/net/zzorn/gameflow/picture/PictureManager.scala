@@ -21,7 +21,12 @@ class PictureManager(picturePath: String = "") {
     picture
   }
 
-  def loadPicture(name: String): Picture = {
+  def get(name: String, scale: Double): Picture = {
+    if (scale == 1.0) get(name)
+    else ScaledPicture(get(name), scale)
+  }
+
+  private def loadPicture(name: String): Picture = {
     var resourceLocation: String = picturePath + name
     val url = this.getClass.getClassLoader.getResource(resourceLocation);
     if (url == null) throw new IllegalStateException("Could not find image with resource location '"+resourceLocation+"'")

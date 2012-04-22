@@ -1,7 +1,7 @@
 package net.zzorn.gameflow
 
 import java.awt.image.BufferStrategy
-import java.awt.{Graphics2D, Canvas}
+import java.awt.{Cursor, Graphics2D, Canvas}
 
 /**
  * Handles rendering game content.
@@ -28,4 +28,5 @@ class GameCanvas extends Canvas {
   def flipPage() {
     _bufferStrategy.show()
   }
+
 }

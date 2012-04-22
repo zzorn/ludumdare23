@@ -2,7 +2,7 @@ package net.zzorn.gameflow.entity
 
 import net.zzorn.utils.{Vec3}
 import java.awt.Graphics2D
-import net.zzorn.gameflow.gamemap.GameMap
+import net.zzorn.gameflow.EntityGroup
 
 
 /**
@@ -10,16 +10,26 @@ import net.zzorn.gameflow.gamemap.GameMap
  */
 class Entity3D extends Entity {
 
-  var gameMap: GameMap = null
+  var group: EntityGroup[_ <: Entity] = null
   val pos      = Vec3()
   val velocity = Vec3()
   val thrust   = Vec3()
 
-  def setGameMap(gameMap: GameMap) {
-    this.gameMap = gameMap
+
+  def setGroup(gameMap: EntityGroup[_ <: Entity]) {
+    this.group = gameMap
   }
 
-  def getGameMap: GameMap = gameMap
+  def getGroup: EntityGroup[_ <: Entity] = group
+
+  /**
+   * Removes the entity itself from the group it is in
+   */
+  override def remove() {
+    var group = getGroup
+    if (group != null) group.remove(this)
+  }
+
 
   def update(durationSeconds: Double) {
     velocity +*= (thrust, durationSeconds)

@@ -1,5 +1,6 @@
 package net.zzorn.gameflow
 
+import camera.Camera
 import java.awt.Graphics2D
 
 /**
@@ -7,6 +8,6 @@ import java.awt.Graphics2D
  */
 trait Rendering {
 
-  def render(g: Graphics2D, screenW: Int, screenH: Int)
+  def render(g: Graphics2D, camera: Camera)
 
 }
