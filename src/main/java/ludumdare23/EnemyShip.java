@@ -20,22 +20,19 @@ public class EnemyShip implements Entity {
     private Vec3 velocity = new Vec3(0,0,0);
     private Vec3 acc      = new Vec3(0,0,0);
 
-    public EnemyShip(Planet planet, PlayerShip player, Picture picture, double maxThrust, double maxSpeed) {
+    public EnemyShip(Planet planet, PlayerShip player, Picture picture, Vec3 startPos, Vec3 startVelocity, double maxThrust, double maxSpeed) {
         this.planet = planet;
         this.player = player;
         this.picture = picture;
         this.maxThrust = maxThrust;
         this.maxSpeed = maxSpeed;
+        pos.set(startPos);
+        velocity.set(startVelocity);
     }
 
     @Override
     public Vec3 pos() {
         return pos;
-    }
-
-    @Override
-    public Vec3 velocity() {
-        return velocity;
     }
 
     @Override
@@ -62,7 +59,7 @@ public class EnemyShip implements Entity {
 
     @Override
     public void draw(Graphics2D g, int screenW, int screenH, int x, int y, double scale) {
-        picture.draw(g,x-picture.w()/2,y-picture.h()/2);
+        picture.drawCentered(g, x, y, scale);
     }
 
 

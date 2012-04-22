@@ -1,6 +1,5 @@
 package net.zzorn.utils
 
-import net.zzorn.utils.Raster
 import java.awt.image.{BufferedImage, DirectColorModel, MemoryImageSource}
 import ParameterChecker._
 import java.awt._
@@ -55,7 +54,7 @@ class RawImage(val width: Int, val height: Int) {
   }
 
   def createBufferedImage: BufferedImage = {
-    val buf = ImageUtils.createScreenCompatibleImage(width, height, Transparency.TRANSLUCENT)
+    val buf = ImageUtils.createScreenCompatibleImage(width, height, Transparency.BITMASK)
 
     _image.flush()
     buf.getGraphics.drawImage(_image, 0, 0, null)

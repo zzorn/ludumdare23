@@ -12,6 +12,8 @@ class TrackingCamera(initialTrackedEntity: Entity,
 
   private var _trackedEntity: Entity = null
   private val targetPos = Vec3()
+  private val entityPos = Vec3()
+  private val oldEntityPos = Vec3()
   private val targetVelocity = Vec3()
 
   setTrackedEntity(initialTrackedEntity)
@@ -22,14 +24,25 @@ class TrackingCamera(initialTrackedEntity: Entity,
     ParameterChecker.requireNotNull(trackedEntity, 'trackedEntity)
 
     _trackedEntity = trackedEntity
-    cameraPos.set(trackedEntity.pos)
+    oldEntityPos.set(_trackedEntity.pos)
+    entityPos.set(_trackedEntity.pos)
+    targetPos.set(_trackedEntity.pos)
+    cameraPos.set(_trackedEntity.pos)
   }
 
   override def update(seconds: Double) {
-    targetPos.set(_trackedEntity.pos)
-    targetVelocity.set(_trackedEntity.velocity)
+    oldEntityPos.set(entityPos)
+    entityPos.set(_trackedEntity.pos)
 
+    // Calculate velocity
+    targetVelocity.set(entityPos)
+    targetVelocity.setMinus(oldEntityPos)
+
+    // Calculate target
+    targetPos.set(entityPos)
     targetPos +*=(targetVelocity, leadingAmount)
+
+    // Move towards target
     cameraPos.mixWith(targetPos, math.min(1.0, seconds * trackingSpeed))
   }
 

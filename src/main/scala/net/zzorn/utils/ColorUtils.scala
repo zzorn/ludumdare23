@@ -16,13 +16,13 @@ object ColorUtils {
   def getAlpha(rgba: Int): Float = ((rgba >> 24) & 0xff) / 255f
 
 
-  def createRGBAColor(r: Float, g: Float, b: Float, a: Float): Int =
+  def createRGBAColor(r: Double, g: Double, b: Double, a: Double): Int =
     (((255 * a).toInt & 0xFF) << 24) |
       (((255 * r).toInt & 0xFF) << 16) |
       (((255 * g).toInt & 0xFF) << 8) |
       (((255 * b).toInt & 0xFF) << 0)
 
-  def mixRGBA(alpha: Float, color: Int, originalColor: Int): Int = {
+  def mixRGBA(alpha: Double, color: Int, originalColor: Int): Int = {
 
     val r = ((originalColor >> 16) & 0xff) * (1f - alpha) +
       ((color >> 16) & 0xff) * alpha
@@ -98,7 +98,7 @@ object ColorUtils {
    *      Convert a Hue Saturation Lightness color to Red Green Blue color space.
    *      Algorithm based on the one in wikipedia ( http://en.wikipedia.org/wiki/HSL_color_space )
    */
-  def HSLtoRGB(hue: Float, saturation: Float, lightness: Float, alpha: Float = 1.0f): Int = {
+  def HSLtoRGB(hue: Double, saturation: Double, lightness: Double, alpha: Double = 1.0f): Int = {
 
     if (lightness == 0) {
       // Black
@@ -115,7 +115,7 @@ object ColorUtils {
     else {
       // Arbitrary color
 
-      def hueToColor(p: Float, q: Float, t: Float): Float = {
+      def hueToColor(p: Double, q: Double, t: Double): Double = {
         var th = t
         if (th < 0) th += 1
         if (th > 1) th -= 1

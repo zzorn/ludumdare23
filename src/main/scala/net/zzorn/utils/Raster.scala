@@ -2,7 +2,6 @@ package net.zzorn.utils
 
 import java.awt.Color
 import net.zzorn.utils.ParameterChecker._
-import net.zzorn.utils.Area
 import java.util.Arrays
 
 object Raster {

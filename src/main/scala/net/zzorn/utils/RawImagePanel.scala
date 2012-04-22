@@ -1,6 +1,5 @@
 package net.zzorn.utils
 
-import net.zzorn.utils.Raster
 import javax.swing.JPanel
 import java.awt.Graphics
 import java.awt.event.{ComponentAdapter, ComponentEvent}

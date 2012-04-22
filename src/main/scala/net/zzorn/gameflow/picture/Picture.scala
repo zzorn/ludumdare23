@@ -12,4 +12,11 @@ trait Picture {
 
   def draw(g: Graphics2D, x: Int, y: Int)
 
+  def drawCentered(g: Graphics2D, x: Int, y: Int, scale: Double = 1.0) {
+    draw(g, x - w/2, y - h/2)
+
+    // TODO: Scale draw
+  }
+
+
 }

@@ -36,11 +36,6 @@ public class PlayerShip extends InputListenerAdapter implements Entity {
         return pos;
     }
 
-    @Override
-    public Vec3 velocity() {
-        return velocity;
-    }
-
     public PlayerShip(Planet planet, Picture picture) {
         this.picture = picture;
         distance = planet.getRadius_m()+50;
@@ -86,6 +81,6 @@ public class PlayerShip extends InputListenerAdapter implements Entity {
 
     @Override
     public void draw(Graphics2D g, int screenW, int screenH, int x, int y, double scale) {
-        picture.draw(g,x- picture.w()/2,y- picture.h()/2);
+        picture.drawCentered(g, x, y, scale);
     }
 }

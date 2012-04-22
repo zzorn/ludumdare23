@@ -6,6 +6,7 @@ import net.zzorn.gameflow.gamemap.GameMap;
 import net.zzorn.gameflow.input.InputListenerAdapter;
 import net.zzorn.gameflow.input.InputStatus;
 import net.zzorn.gameflow.input.PrintingInputListener;
+import net.zzorn.gameflow.picture.Picture;
 import net.zzorn.utils.Vec3;
 
 import java.awt.*;
@@ -24,7 +25,7 @@ public class Game extends GameBase {
 
 
     public Game() {
-        super("planeettapeli", 300.0, 1200, 1000, "");
+        super("LD23", 300.0, 1000, 800, "");
 
     }
 
@@ -44,8 +45,8 @@ public class Game extends GameBase {
         inputHandler().addListener(player);
 
         // Create a camera that tracks the player
-        final TrackingCamera camera = new TrackingCamera(player, 10, 10);
-        camera.setCameraScale(0.1);
+        final TrackingCamera camera = new TrackingCamera(player, 75, 2);
+        camera.setCameraScale(0.4);
 
         // Set up the map
         gameMap=new GameMap(camera);
@@ -77,17 +78,15 @@ public class Game extends GameBase {
 
     private EnemyShip createEnemy(Planet planet, PlayerShip player) {
 
+        // Randomize enemy start position and speed
+        Vec3 startPos = createRandomVec(10000);
+        Vec3 startVelocity = createRandomVec(1000);
 
         // Create enemy ship
         double maxSpeed = randomValue(10, 1000);
         double enginePower = randomValue(10, 1000);
-        EnemyShip enemyShip = new EnemyShip(planet, player, pictureStore().get("images/enemyship1.png"), enginePower, maxSpeed);
-
-        // Randomize enemy start position and speed
-        enemyShip.pos().set(createRandomVec(10000));
-        enemyShip.velocity().set(createRandomVec(1000));
-
-        return enemyShip;
+        Picture picture = pictureStore().get("images/enemyship1.png");
+        return new EnemyShip(planet, player, picture, startPos, startVelocity, enginePower, maxSpeed);
     }
 
     private double randomValue(double start, double end) {
