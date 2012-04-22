@@ -4,11 +4,15 @@ import java.awt.Graphics2D
 import scala.Double
 import net.zzorn.utils.{Vec3, Vec2}
 import net.zzorn.gameflow.Updating
+import net.zzorn.gameflow.gamemap.GameMap
 
 /**
  * Something that can be drawn and updated.
  */
 trait Entity extends Updating {
+
+  def setGameMap(gameMap: GameMap)
+  def getGameMap: GameMap
 
   def pos: Vec3
 

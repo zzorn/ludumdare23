@@ -14,8 +14,7 @@ import java.util.Random;
 /**
  * A home-world to defend
  */
-public class Planet implements Entity {
-    private Vec3 pos = new Vec3(0, 0, 0);
+public class Planet extends  BaseEntity {
     private double mass_kg = 100000000000000000.0;
     private double radius_m = 1000;
     private final Picture picture;
@@ -76,6 +75,8 @@ public class Planet implements Entity {
 
         RawImage rawImage = new RawImage(size, size);
 
+        int colorCoreBot = ColorUtils$.MODULE$.HSLtoRGB(0.15, 0.6, 0.4, 1.0);
+        int colorCoreTop = ColorUtils$.MODULE$.HSLtoRGB(0.01, 0.5, 0.3, 1.0);
         int colorCenterBot = ColorUtils$.MODULE$.HSLtoRGB(0.1, 0.3, 0.2, 1.0);
         int colorCenterTop = ColorUtils$.MODULE$.HSLtoRGB(0.1, 0.3, 0.3, 1.0);
         int colorCrustBot = ColorUtils$.MODULE$.HSLtoRGB(0.15, 0.34, 0.3, 1.0);
@@ -95,7 +96,8 @@ public class Planet implements Entity {
 
                 // Calculate color depending on what layer we are in
                 int color;
-                if (     pixelHeight < calculateLayerHeight(rx, ry, 0.3, 0.2, 0.15))   color = mixColor(pixelHeight, 0.1, 0.4, colorCenterBot, colorCenterTop);
+                if (     pixelHeight < calculateLayerHeight(rx, ry, 0.15, 0.1, 0.05)) color = mixColor(pixelHeight, 0.05, 0.2, colorCoreBot, colorCoreTop);
+                else if (pixelHeight < calculateLayerHeight(rx, ry, 0.3, 0.2, 0.15))  color = mixColor(pixelHeight, 0.1, 0.4, colorCenterBot, colorCenterTop);
                 else if (pixelHeight < calculateLayerHeight(rx, ry, 0.45, 0.1, 0.1))  color = mixColor(pixelHeight, 0.3, 0.5, colorCrustBot, colorCrustTop);
                 else if (pixelHeight < calculateLayerHeight(rx, ry, 0.6, 0.03, 0.25)) color = mixColor(pixelHeight, 0.4, 0.63, colorGrassBot, colorGrassTop);
                 else if (pixelHeight < 0.7)                                           color = mixColor(pixelHeight, 0.6, 0.7, colorAtmosphereBase, colorAtmosphereTop);

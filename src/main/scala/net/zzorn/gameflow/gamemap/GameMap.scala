@@ -33,11 +33,13 @@ class GameMap(var camera: Camera = new StationaryCamera()) extends BaseFacet {
 
   final def add(entity: Entity) {
     _entities.add(entity)
+    entity.setGameMap(this)
     onEntityAdded(entity)
   }
 
   final def remove(entity: Entity) {
     onEntityRemoved(entity)
+    entity.setGameMap(null)
     _entities.remove(entity)
   }
 

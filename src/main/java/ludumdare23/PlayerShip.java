@@ -1,6 +1,7 @@
 package ludumdare23;
 
 import net.zzorn.gameflow.entity.Entity;
+import net.zzorn.gameflow.gamemap.GameMap;
 import net.zzorn.gameflow.picture.Picture;
 import net.zzorn.gameflow.input.*;
 import net.zzorn.utils.Vec3;
@@ -11,7 +12,7 @@ import java.awt.event.KeyEvent;
 /**
  * The ship controlled by the player.
  */
-public class PlayerShip extends InputListenerAdapter implements Entity {
+public class PlayerShip extends Ship {
 
     private int upKey    = KeyEvent.VK_UP;
     private int downKey  = KeyEvent.VK_DOWN;
@@ -27,15 +28,6 @@ public class PlayerShip extends InputListenerAdapter implements Entity {
     private double angSlow = 0.98 ;
     private final Picture picture;
 
-    private Vec3 pos = new Vec3(0,0,0);
-    private Vec3 velocity = new Vec3(0,0,0);
-
-
-    @Override
-    public Vec3 pos() {
-        return pos;
-    }
-
     public PlayerShip(Planet planet, Picture picture) {
         this.picture = picture;
         distance = planet.getRadius_m()+50;
@@ -46,7 +38,7 @@ public class PlayerShip extends InputListenerAdapter implements Entity {
     }
 
     @Override
-    public void update(double durationSeconds) {
+    protected void onUpdate(double durationSeconds) {
         angVelosity += angAcc * durationSeconds;
         angVelosity *= angSlow;
         if (angVelosity>=100) {
@@ -83,4 +75,7 @@ public class PlayerShip extends InputListenerAdapter implements Entity {
     public void draw(Graphics2D g, int screenW, int screenH, int x, int y, double scale) {
         picture.drawCentered(g, x, y, scale);
     }
+
+
+
 }

@@ -9,7 +9,7 @@ import java.awt.*;
 /**
  * Enemy ship that attacks the planet and the player
  */
-public class EnemyShip implements Entity {
+public class EnemyShip extends Ship {
     private final Planet planet;
     private Entity target;
     private final Picture picture;
@@ -17,9 +17,6 @@ public class EnemyShip implements Entity {
     private double maxSpeed;
     private boolean onSurface=false;
 
-    private Vec3 pos      = new Vec3(0,0,0);
-    private Vec3 velocity = new Vec3(0,0,0);
-    private Vec3 acc      = new Vec3(0,0,0);
 
     public EnemyShip(Planet planet, Entity target, Picture picture, Vec3 startPos, Vec3 startVelocity, double maxThrust, double maxSpeed) {
         this.planet = planet;
@@ -39,7 +36,7 @@ public class EnemyShip implements Entity {
     }
 
     @Override
-    public void update(double durationSeconds) {
+    protected void onUpdate(double durationSeconds) {
         double surfaceDist = planet.getSurfaceDist(pos(), picture.w()/2 );
         if (surfaceDist<=0) {
             //onSurface=true;

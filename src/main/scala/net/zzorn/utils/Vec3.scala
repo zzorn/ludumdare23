@@ -24,6 +24,8 @@ object Vec3 {
     )
   }
 
+  def fromTo(start: Vec3, end: Vec3): Vec3 = end - start
+
 }
 
 /**
