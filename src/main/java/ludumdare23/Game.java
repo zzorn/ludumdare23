@@ -53,9 +53,6 @@ public class Game extends GameBase {
 
         // Set up the map
         gameMap=new GameMap(camera);
-        gameMap.add(new FloatingParticle(planet, new Vec3(planet.getRadius_m()+50,0,0) , 20 ,new Vec3(90, 100,0 ),1,Color.BLUE));
-        gameMap.add(new FloatingParticle(planet, new Vec3(planet.getRadius_m()+50,0,0) , 20 ,new Vec3(10, 0,0 ),2,Color.GRAY));
-        gameMap.add(new FloatingParticle(planet, new Vec3(planet.getRadius_m()+550,0,0) , 20 ,new Vec3(-100, 20,0 ),100,Color.YELLOW));
         gameMap.add(planet);
         gameMap.add(player);
         addFacet(gameMap);
