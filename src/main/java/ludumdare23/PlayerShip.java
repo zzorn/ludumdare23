@@ -85,6 +85,21 @@ public class PlayerShip extends Ship {
     }
 
     @Override
+    public void onKeyPressed(int key, InputStatus inputStatus, double durationSeconds) {
+        if (key == fireKey) onFirePressed();
+    }
+
+    @Override
+    public void onMouseButtonPressed(MouseButton button, int x, int y, InputStatus inputStatus, double durationSeconds) {
+        if (button == fireButton) onFirePressed();
+    }
+
+    private void onFirePressed() {
+        // Reload the weapon instantly when the fire button is pressed down, it feels more responsive.
+        if (getWeapon() != null) getWeapon().instantReload();
+    }
+
+    @Override
     public void onMouseMoved(int x, int y, InputStatus inputStatus, double durationSeconds) {
         // Update targeted spot
         game.getCamera().screenPosToWorldPos(x, y, target);

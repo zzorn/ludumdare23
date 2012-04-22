@@ -52,10 +52,19 @@ public class Weapon {
             coolDownLeft = coolDownTime;
             clipLeft--;
             if (clipLeft <= 0) {
-                clipLeft = clipSize;
-                clipReloadTimeLeft = clipReloadTime;
+                reload();
             }
         }
+    }
+
+    public void instantReload() {
+        clipLeft = clipSize;
+        clipReloadTimeLeft = 0;
+    }
+
+    public void reload() {
+        clipLeft = clipSize;
+        clipReloadTimeLeft = clipReloadTime;
     }
 
     public void update(double durationSeconds) {

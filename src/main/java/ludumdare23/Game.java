@@ -72,6 +72,8 @@ public class Game extends GameBase {
         PlayerShip player = new PlayerShip(this, planet, this.pictureStore().get("images/playership.png", 2.0));
         inputHandler().addListener(player);
         player.setWeapon(new Weapon(planet, playerBulletGroup, 0.08, 10, 1500, 1, Color.CYAN, 8, 0.5, 500, 25));
+        player.setMaxHitPoints(300);
+        player.setHitPoints(300);
         playerGroup.add(player);
 
         // Create a camera that tracks the player
@@ -81,7 +83,7 @@ public class Game extends GameBase {
 
 
         // Add enemies
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             // Planet shooters
             enemyGroup.add(createPlanetEnemy(planet, planet, "images/enemyship1.png", 1500, 2,
                     createWeapon(planet, 5, 15.0, 200.0, new Color(255, 131, 0), 1, 0, 30)));
@@ -89,7 +91,7 @@ public class Game extends GameBase {
         for (int i = 0; i < 10; i++) {
             // Player shooters
             enemyGroup.add(createPlanetEnemy(planet, player, "images/enemyship2.png", 400, 10,
-                    createWeapon(planet, 0.1, 10.0, 500.0, new Color(255, 195, 0), 8, 2, 5)));
+                    createWeapon(planet, 0.1, 10.0, 800.0, new Color(255, 195, 0), 8, 2, 5)));
         }
 
 
@@ -113,7 +115,7 @@ public class Game extends GameBase {
     }
 
 
-    private EnemyShip createPlanetEnemy(Planet planet, Entity target, String image, int distance, int maxBrakeAcc, Weapon weapon) {
+    private EnemyShip createPlanetEnemy(Planet planet, Entity target, String image, double brakeDistance, int maxBrakeAcc, Weapon weapon) {
 
         // Randomize enemy start position and speed
         Vec3 startPos = createRandomVec(10000);
@@ -124,7 +126,7 @@ public class Game extends GameBase {
         double enginePower = randomValue(10, 1000);
         double shootDistance = randomValue(200, 5000);
         Picture picture = pictureStore().get(image, 2.0);
-        EnemyShip enemyShip = new EnemyShip(planet, target, picture, startPos, startVelocity, enginePower, maxSpeed, distance, maxBrakeAcc, shootDistance);
+        EnemyShip enemyShip = new EnemyShip(planet, target, picture, startPos, startVelocity, enginePower, maxSpeed, brakeDistance, maxBrakeAcc, shootDistance);
         enemyShip.setWeapon(weapon);
         return enemyShip;
     }
