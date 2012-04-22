@@ -137,4 +137,8 @@ public class Planet extends  BaseEntity {
         return x*x + y*y;
     }
 
+    @Override
+    protected void onDestroyed() {
+        remove();
+    }
 }

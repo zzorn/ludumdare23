@@ -8,7 +8,7 @@ import net.zzorn.utils.Vec3;
 public abstract class Ship extends BaseEntity implements Damageable {
 
     private Weapon weapon = null;
-    private double radius = 10;
+    private double radius = 30;
 
     public double getRadius() { return radius; }
     public Weapon getWeapon() { return weapon; }

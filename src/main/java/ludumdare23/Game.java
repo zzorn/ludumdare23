@@ -22,6 +22,7 @@ public class Game extends GameBase {
     private static final CollisionHandler<Particle, Damageable> BULLET_COLLISION_HANDLER = new CollisionHandler<Particle, Damageable>(){
         public void onCollision(Particle bullet, Damageable damageable) {
             damageable.damage(bullet.getDamage());
+            System.out.println("HP Left " + damageable + ": " + damageable.getHitPoints());
             bullet.remove();
         }
     };
@@ -63,8 +64,8 @@ public class Game extends GameBase {
 
         // Create planet
         Planet planet = new Planet();
-        planet.setMaxHitPoints(1000);
-        planet.setHitPoints(1000);
+        planet.setMaxHitPoints(10000);
+        planet.setHitPoints(10000);
         planetGroup.add(planet);
 
         // Create players ship
@@ -105,10 +106,10 @@ public class Game extends GameBase {
         });
 
         // Set up collisions
-        enemyBulletGroup.onCollideWith(playerGroup, BULLET_COLLISION_HANDLER);
         enemyBulletGroup.onCollideWith(planetGroup, BULLET_COLLISION_HANDLER);
-        playerBulletGroup.onCollideWith(enemyGroup, BULLET_COLLISION_HANDLER);
+        enemyBulletGroup.onCollideWith(playerGroup, BULLET_COLLISION_HANDLER);
         playerBulletGroup.onCollideWith(planetGroup, BULLET_COLLISION_HANDLER);
+        playerBulletGroup.onCollideWith(enemyGroup, BULLET_COLLISION_HANDLER);
     }
 
 

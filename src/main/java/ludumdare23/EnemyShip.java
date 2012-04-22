@@ -108,7 +108,10 @@ public class EnemyShip extends Ship {
         picture.drawCentered(g, x, y, scale);
     }
 
-
+    @Override
+    protected void onDestroyed() {
+        remove();
+    }
 }
 
 

@@ -98,4 +98,6 @@ public abstract class BaseEntity extends InputListenerAdapter implements Entity,
 
     }
 
+
+
 }
