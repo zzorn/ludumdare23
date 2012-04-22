@@ -11,23 +11,26 @@ import java.awt.*;
  */
 public class EnemyShip implements Entity {
     private final Planet planet;
-    private PlayerShip player;
+    private Entity target;
     private final Picture picture;
     private double maxThrust;
     private double maxSpeed;
+    private boolean onSurface=false;
 
     private Vec3 pos      = new Vec3(0,0,0);
     private Vec3 velocity = new Vec3(0,0,0);
     private Vec3 acc      = new Vec3(0,0,0);
 
-    public EnemyShip(Planet planet, PlayerShip player, Picture picture, Vec3 startPos, Vec3 startVelocity, double maxThrust, double maxSpeed) {
+    public EnemyShip(Planet planet, Entity target, Picture picture, Vec3 startPos, Vec3 startVelocity, double maxThrust, double maxSpeed) {
         this.planet = planet;
-        this.player = player;
+        this.target = target;
         this.picture = picture;
         this.maxThrust = maxThrust;
         this.maxSpeed = maxSpeed;
         pos.set(startPos);
         velocity.set(startVelocity);
+
+
     }
 
     @Override
@@ -37,24 +40,43 @@ public class EnemyShip implements Entity {
 
     @Override
     public void update(double durationSeconds) {
-        // Accelerate towards the player
-        acc.set(player.pos());
-        acc.setMinus(pos);
-        acc.setNormalized(); // Now we have direction towards player in acc, multiply with our thrust to get actual acceleration
-        acc.setMul(maxThrust);
-
-        // Update velocity based on acceleration
-        velocity.setPlusMul(acc, durationSeconds);
-
-        // Clamp velocity to maxSpeed
-        double velSize = velocity.length();
-        if (velSize > maxSpeed) {
-            velocity.setNormalized();
-            velocity.setMul(maxSpeed);
+        double surfaceDist = planet.getSurfaceDist(pos(), picture.w()/2 );
+        if (surfaceDist<=0) {
+            //onSurface=true;
+            Vec3 normal=planet.normalAt(pos());
+            normal.setMul(surfaceDist);
+            pos().setMinus(normal);
         }
+        if (!onSurface){
+            // Accelerate towards the target
+            double distanceToTarget=pos().distance(target.pos());
+            if (distanceToTarget>500){
+                acc.set(target.pos());
+                acc.setMinus(pos);
+                acc.setNormalized(); // Now we have direction towards player in acc, multiply with our thrust to get actual acceleration
+                acc.setMul(maxThrust);
+            }
+            else{
+                acc.set(target.pos());
+                acc.setMinus(pos);
+                acc.setNormalized(); // Now we have direction towards player in acc, multiply with our thrust to get actual acceleration
+                acc.setMul(-2*maxThrust);
+            }
 
-        // Update position based on velocity
-        pos.setPlusMul(velocity, durationSeconds);
+
+            // Update velocity based on acceleration
+            velocity.setPlusMul(acc, durationSeconds);
+
+            // Clamp velocity to maxSpeed
+            double velSize = velocity.length();
+            if (velSize > maxSpeed) {
+                velocity.setNormalized();
+                velocity.setMul(maxSpeed);
+            }
+
+            // Update position based on velocity
+            pos.setPlusMul(velocity, durationSeconds);
+        }
     }
 
     @Override

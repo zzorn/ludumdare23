@@ -1,6 +1,7 @@
 package ludumdare23;
 
 import net.zzorn.gameflow.GameBase;
+import net.zzorn.gameflow.camera.StationaryCamera;
 import net.zzorn.gameflow.camera.TrackingCamera;
 import net.zzorn.gameflow.gamemap.GameMap;
 import net.zzorn.gameflow.input.InputListenerAdapter;
@@ -45,8 +46,9 @@ public class Game extends GameBase {
         inputHandler().addListener(player);
 
         // Create a camera that tracks the player
-        final TrackingCamera camera = new TrackingCamera(player, 75, 2);
-        camera.setCameraScale(0.4);
+        final TrackingCamera camera = new TrackingCamera(player , 75, 2);
+       camera.setCameraScale(0.4);
+
 
         // Set up the map
         gameMap=new GameMap(camera);
