@@ -75,10 +75,35 @@ public class PlayerShip extends Ship {
         angAcc=0;
 
         if (inputStatus.isKeyHeld(rightKey)) {
-            angAcc += maxAngAcc;
+            if (angle>=270) angAcc += maxAngAcc;
+            if (angle>=0 && angle<90) angAcc += -maxAngAcc;
+            if (angle>=90 && angle<180) angAcc += -maxAngAcc;
+            if (angle>=180 && angle<270) angAcc += maxAngAcc;
         }
+
         if (inputStatus.isKeyHeld(leftKey))  {
-            angAcc += -maxAngAcc;
+            if (angle>=270) angAcc += -maxAngAcc;
+            if (angle>=0 && angle<90) angAcc += maxAngAcc;
+            if (angle>=90 && angle<180) angAcc += maxAngAcc;
+            if (angle>=180 && angle<270) angAcc += -maxAngAcc;
+
+        }
+
+        if (inputStatus.isKeyHeld(upKey))  {
+            if (angle>=270) angAcc += -maxAngAcc;
+            if (angle>=0 && angle<90) angAcc += -maxAngAcc;
+            if (angle>=90 && angle<180) angAcc += maxAngAcc;
+            if (angle>=180 && angle<270) angAcc += maxAngAcc;
+
+        }
+
+
+        if (inputStatus.isKeyHeld(downKey))  {
+            if (angle>=270) angAcc += maxAngAcc;
+            if (angle>=0 && angle<90) angAcc += maxAngAcc;
+            if (angle>=90 && angle<180) angAcc += -maxAngAcc;
+            if (angle>=180 && angle<270) angAcc += -maxAngAcc;
+
         }
 
         firePressed = inputStatus.isKeyHeld(fireKey) || inputStatus.isMouseButtonHeld(fireButton);
