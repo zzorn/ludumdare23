@@ -30,6 +30,17 @@ Life tracking
 * Larger explosion balls and more of them for planet
 
 
+Sound
+* Weapon sounds
+* Enemy explosion sounds
+* Player death sound
+* Planet death sound
+* Bonus pickup sound
+* Title screen music
+* Death music
+* Game music?
+
+
 Powerups
 * Some enemies may drop their weapon when destroyed, it is picked up and equipped if flown over
 * When picked up, show "picked up: weapon name" or soemthing like that
