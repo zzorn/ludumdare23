@@ -18,6 +18,8 @@ public class PlayerShip extends Ship {
     private int rightKey = KeyEvent.VK_D;
     private int clockwiseKey  = KeyEvent.VK_C;
     private int counterclockwiseKey = KeyEvent.VK_X;
+    private int clockwiseKey2  = KeyEvent.VK_RIGHT;
+    private int counterclockwiseKey2 = KeyEvent.VK_LEFT;
     private int fireKey  = KeyEvent.VK_SPACE;
     private MouseButton fireButton = LeftMouseButton$.MODULE$;
 
@@ -117,8 +119,8 @@ public class PlayerShip extends Ship {
 
         }
 
-        if (inputStatus.isKeyHeld(clockwiseKey)) clockwise = true;
-        if (inputStatus.isKeyHeld(counterclockwiseKey)) counterClockwise = true;
+        if (inputStatus.isKeyHeld(clockwiseKey) || inputStatus.isKeyHeld(clockwiseKey2)) clockwise = true;
+        if (inputStatus.isKeyHeld(counterclockwiseKey) || inputStatus.isKeyHeld(counterclockwiseKey2)) counterClockwise = true;
 
         if (clockwise)        angAcc += maxAngAcc;
         if (counterClockwise) angAcc -= maxAngAcc;

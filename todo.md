@@ -66,5 +66,8 @@ Controls
 * [DONE] Zoom with scrollwheel also, limit min and max zoom
 * [DONE] Scaling camera
 
+Space rendering
+* Some stars / stardust in the background?
+
 
 
