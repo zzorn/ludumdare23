@@ -38,7 +38,7 @@ public class PlayerShip extends Ship {
     public PlayerShip(Game game, Planet planet, Picture picture) {
         this.game = game;
         this.picture = picture;
-        distance = planet.getRadius()+400;
+        distance = planet.getRadius()+Game.PLAYER_FLIGHT_HEIGHT;
         this.planet = planet;
         pos().setX(planet.pos().x());
         pos().setY(-distance + planet.pos().y());
@@ -70,6 +70,13 @@ public class PlayerShip extends Ship {
             getWeapon().fire(target);
         }
 
+    }
+
+    public void resetAtLevelStart() {
+        setHitPoints(getMaxHitPoints());
+        angle = 270;
+        angVelosity = 0;
+        angAcc = 0;
     }
 
 

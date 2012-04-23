@@ -131,7 +131,8 @@ class GameBase(title: String = "GameFlow",
    * Stops the game after the next run through the main loop finishes.
    */
   final def stop() {
-    running = false
+    System.exit(0)
+    //running = false // TODO: Doesn't exit cleanly for some reason.
   }
 
 
@@ -168,6 +169,7 @@ class GameBase(title: String = "GameFlow",
     _canvas.addKeyListener(_inputHandler)
     _canvas.addMouseListener(_inputHandler)
     _canvas.addMouseMotionListener(_inputHandler)
+    _canvas.addMouseWheelListener(_inputHandler)
   }
 
 

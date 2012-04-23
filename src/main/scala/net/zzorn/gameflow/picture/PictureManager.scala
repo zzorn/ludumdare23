@@ -11,14 +11,17 @@ import net.zzorn.utils.ImageUtils
  */
 class PictureManager(picturePath: String = "") {
 
+  private val images: HashMap[String, BufferedImage] = new HashMap[String, BufferedImage]()
   private val pictures: HashMap[String, Picture] = new HashMap[String, Picture]()
 
+  def getImage(name: String): BufferedImage = {
+    if (!images.containsKey(name)) loadPicture(name)
+    images.get(name)
+  }
+
   def get(name: String): Picture = {
-    var picture: Picture = pictures.get(name)
-    if (picture == null) {
-      picture = loadPicture(name)
-    }
-    picture
+    if (!pictures.containsKey(name)) loadPicture(name)
+    pictures.get(name)
   }
 
   def get(name: String, scale: Double): Picture = {
@@ -27,12 +30,14 @@ class PictureManager(picturePath: String = "") {
   }
 
   private def loadPicture(name: String): Picture = {
-    var resourceLocation: String = picturePath + name
+    val resourceLocation: String = picturePath + name
     val url = this.getClass.getClassLoader.getResource(resourceLocation);
     if (url == null) throw new IllegalStateException("Could not find image with resource location '"+resourceLocation+"'")
 
-    val pic = new BufferedImagePicture(ImageUtils.createScreenCompatibleImage(ImageIO.read(url)))
+    val bufferedImage: BufferedImage = ImageUtils.createScreenCompatibleImage(ImageIO.read(url))
+    val pic = new BufferedImagePicture(bufferedImage)
     pictures.put(name, pic)
+    images.put(name, bufferedImage)
     pic
   }
 

@@ -21,6 +21,11 @@ trait InputListener {
   def onMouseMoved(x: Int, y: Int, inputStatus: InputStatus, durationSeconds: Double) {}
 
   /**
+   * Called when the mouse wheel is moved
+   */
+  def onMouseWheelMoved(wheelMovement: Int, x: Int, y: Int, inputStatus: InputStatus, durationSeconds: Double) {}
+
+  /**
    * Called when a mouse button is pressed.
    */
   def onMouseButtonPressed(button: MouseButton, x: Int, y: Int, inputStatus: InputStatus, durationSeconds: Double) {}

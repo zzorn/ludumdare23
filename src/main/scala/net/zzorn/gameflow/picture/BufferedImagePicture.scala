@@ -12,7 +12,7 @@ class BufferedImagePicture(image: BufferedImage) extends Picture {
   def w = image.getWidth
   def h = image.getHeight
 
-  def draw(g: Graphics2D, x: Double, y: Double) {
+  override def draw(g: Graphics2D, x: Double, y: Double) {
     g.drawImage(image, x.toInt, y.toInt, null)
   }
 

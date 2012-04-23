@@ -20,25 +20,30 @@ class TrackingCamera(initialTrackedEntity: Entity,
   def trackedEntity: Entity = _trackedEntity
 
   def setTrackedEntity(trackedEntity: Entity) {
-    ParameterChecker.requireNotNull(trackedEntity, 'trackedEntity)
-
     _trackedEntity = trackedEntity
-    oldEntityPos.set(_trackedEntity.pos)
-    entityPos.set(_trackedEntity.pos)
-    targetPos.set(_trackedEntity.pos)
-    cameraPos.set(_trackedEntity.pos)
+    if (_trackedEntity != null) {
+      oldEntityPos.set(_trackedEntity.pos)
+      entityPos.set(_trackedEntity.pos)
+      targetPos.set(_trackedEntity.pos)
+      cameraPos.set(_trackedEntity.pos)
+    }
+    else{
+      cameraPos.set(0,0,0)
+    }
   }
 
   override def update(seconds: Double) {
-    oldEntityPos.set(entityPos)
-    entityPos.set(_trackedEntity.pos)
+    if (_trackedEntity != null) {
+      oldEntityPos.set(entityPos)
+      entityPos.set(_trackedEntity.pos)
 
-    // Calculate target
-    targetPos.set(entityPos)
-    targetPos +*=(_trackedEntity.velocity, leadingAmount)
+      // Calculate target
+      targetPos.set(entityPos)
+      targetPos +*=(_trackedEntity.velocity, leadingAmount)
 
-    // Move towards target
-    cameraPos.mixWith(targetPos, math.min(1.0, seconds * trackingSpeed))
+      // Move towards target
+      cameraPos.mixWith(targetPos, math.min(1.0, seconds * trackingSpeed))
+    }
   }
 
 }

@@ -3,14 +3,24 @@ TODO List
 
 
 Game progression
-* Intro screen, with key functions and short presentation of mission.  Maybe as overlay on top of planet
-* Get ready to get deployed screen?
+* [DONE] Intro screen, with key functions and short presentation of mission.  Maybe as overlay on top of planet
+* Intra-level screen
 * Game over screen
   * If player or planet destroyed
   * Game over sound/music
   * Overlay game over text, send to intro after keypress after a second or so
+  * Restart current level
+
+
+Enemy waves
+* A wave creates some enemies, add them over time
+* Some enemies follow others
+  * Some flight behaviour, formation, or similar components would be nice to have..
+* Waves could be generated too
+* Waves have a difficulty, get more difficult later
 * If a wave + boss has been wiped out 95%, destroy rest of ships, progress to next wave, display text optionally, sound.
 * If final wave wiped out, display "sector saved!", win sound/music, get deployed to new planet
+
 
 
 Life tracking
@@ -42,8 +52,8 @@ Planet damage indication
 
 
 Controls
-* Zoom with scrollwheel also, limit min and max zoom
-* Scaling camera [DONE]
+* [DONE] Zoom with scrollwheel also, limit min and max zoom
+* [DONE] Scaling camera
 
 
 

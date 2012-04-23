@@ -17,6 +17,9 @@ trait Camera {
   var cameraScale: Double = 1.0
   val cameraPos: Vec3 = Vec3()
 
+  def screenCenterX: Int = screenW / 2
+  def screenCenterY: Int = screenH / 2
+
   def setCameraScale(scale: Double) {
     cameraScale = scale
   }

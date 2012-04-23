@@ -10,7 +10,7 @@ import java.util.{HashSet, ArrayList, HashMap}
 /**
  *
  */
-class InputHandler extends BaseFacet with KeyListener with MouseListener with MouseMotionListener with InputStatus {
+class InputHandler extends BaseFacet with KeyListener with MouseListener with MouseMotionListener with MouseWheelListener with InputStatus {
 
   val NumKeys = 256
   val NumButtons = 4
@@ -24,6 +24,8 @@ class InputHandler extends BaseFacet with KeyListener with MouseListener with Mo
   private var mouseX       = 0
   private var mouseY       = 0
   private var mouseMoved   = false
+  private var mouseWheel   = 0
+  private var mouseWheelMoved   = false
 
   private var listeners: ArrayList[InputListener] = new ArrayList[InputListener]()
 
@@ -99,6 +101,13 @@ class InputHandler extends BaseFacet with KeyListener with MouseListener with Mo
     mouseMoved = true
   }
 
+  override def mouseWheelMoved(e: MouseWheelEvent) {
+    mouseWheel = e.getWheelRotation
+    mouseWheelMoved = true
+  }
+
+
+
   // Ignore these
   def mouseClicked(e: MouseEvent) {}
   def mouseEntered(e: MouseEvent) {}
@@ -131,6 +140,13 @@ class InputHandler extends BaseFacet with KeyListener with MouseListener with Mo
     if (mouseMoved) {
       mouseMoved = false
       listeners foreach {_.onMouseMoved(x, y, this, durationSeconds)}
+    }
+
+    // Notify about mouse wheel movement
+    if (mouseWheelMoved) {
+      val wheel = mouseWheel
+      mouseWheelMoved = false
+      listeners foreach {_.onMouseWheelMoved(wheel, x, y, this, durationSeconds)}
     }
 
     // Notify about mouse presses
