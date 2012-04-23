@@ -10,6 +10,10 @@ public abstract class Ship extends BaseEntity implements Damageable {
     private Weapon weapon = null;
     private double radius = 30;
 
+    protected Ship(Game game) {
+        super(game);
+    }
+
     public double getRadius() { return radius; }
     public Weapon getWeapon() { return weapon; }
 

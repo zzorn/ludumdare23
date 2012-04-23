@@ -12,14 +12,14 @@ import java.awt.event.KeyEvent;
  */
 public class PlayerShip extends Ship {
 
-    private int upKey    = KeyEvent.VK_W;
-    private int downKey  = KeyEvent.VK_S;
-    private int leftKey  = KeyEvent.VK_A;
-    private int rightKey = KeyEvent.VK_D;
-    private int clockwiseKey  = KeyEvent.VK_C;
-    private int counterclockwiseKey = KeyEvent.VK_X;
-    private int clockwiseKey2  = KeyEvent.VK_RIGHT;
-    private int counterclockwiseKey2 = KeyEvent.VK_LEFT;
+    private int upKey    = KeyEvent.VK_UP;
+    private int downKey  = KeyEvent.VK_DOWN;
+    private int leftKey  = KeyEvent.VK_LEFT;
+    private int rightKey = KeyEvent.VK_RIGHT;
+    private int clockwiseKey  = KeyEvent.VK_D;
+    private int counterclockwiseKey = KeyEvent.VK_A;
+    private int clockwiseKey2  = KeyEvent.VK_X;
+    private int counterclockwiseKey2 = KeyEvent.VK_C;
     private int fireKey  = KeyEvent.VK_SPACE;
     private MouseButton fireButton = LeftMouseButton$.MODULE$;
 
@@ -32,13 +32,12 @@ public class PlayerShip extends Ship {
     private double maxAngVel=100;
     private double angAcc =0;
     private double angSlow = 3;
-    private final Game game;
     private final Picture picture;
     private boolean firePressed = false;
     private Vec3 target = new Vec3(0,0,0);
 
     public PlayerShip(Game game, Planet planet, Picture picture) {
-        this.game = game;
+        super(game);
         this.picture = picture;
         distance = planet.getRadius()+Game.PLAYER_FLIGHT_HEIGHT;
         this.planet = planet;
@@ -146,7 +145,7 @@ public class PlayerShip extends Ship {
     @Override
     public void onMouseMoved(int x, int y, InputStatus inputStatus, double durationSeconds) {
         // Update targeted spot
-        game.getCamera().screenPosToWorldPos(x, y, target);
+        getGame().getCamera().screenPosToWorldPos(x, y, target);
     }
 
     @Override
@@ -157,6 +156,8 @@ public class PlayerShip extends Ship {
 
     @Override
     protected void onDestroyed() {
+        getGame().spawnExplosion(pos(), velocity(), getRadius(), 80, 60, 0.6, 14, 600);
+        getGame().spawnExplosion(pos(), velocity(), getRadius(), 25, 10, 1, 6, 1500);
         remove();
     }
 }

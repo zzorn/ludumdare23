@@ -20,7 +20,8 @@ public class Planet extends  BaseEntity {
     private double radius_m = 1000;
     private final Picture picture;
 
-    public Planet() {
+    public Planet(Game game) {
+        super(game);
         picture = createPicture(42, (int)radius_m*2);
     }
 
@@ -138,7 +139,35 @@ public class Planet extends  BaseEntity {
     }
 
     @Override
+    public void damage(double amount, Vec3 pos) {
+        super.damage(amount, pos);
+        if (!isDestroyed()) {
+            // Not destroyed yet, but show hit explosion
+            double intensity = amount / (amount + 30.0);
+            Vec3 p = normalAt(pos);
+            p.setMul(getRadius() + 40);
+            Vec3 vec = normalAt(pos);
+            vec.setMul(100*intensity);
+            getGame().spawnExplosion(
+                    p,
+                    vec,
+                    10*intensity,
+                    50*intensity,
+                    10*intensity,
+                    intensity,
+                    20*intensity,
+                    300*intensity);
+        }
+    }
+
+    @Override
     protected void onDestroyed() {
+        getGame().spawnExplosion(pos(), velocity(), getRadius() * 0.9, getRadius() * 0.2, 100, 0.2, 20, 150);
+        getGame().spawnExplosion(pos(), velocity(), getRadius() * 1.1, getRadius() * 0.1, 40, 0.4, 10, 500);
+        getGame().spawnExplosion(pos(), velocity(), getRadius() * 0.5, getRadius() * 0.01, 40, 0.9, 10, 2000);
+
+        radius_m = 0.1;
+        mass_kg = 0.1;
         remove();
     }
 }
