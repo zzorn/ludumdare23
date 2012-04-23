@@ -97,7 +97,7 @@ public class Game extends GameBase {
 
         // Create font
         font = new FixedBitmapFont(pictureStore().getImage(
-                "images/spacefont-shadowed.png"),
+                "images/spacefont.png"),
                 8,
                 11,
                 "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ0123456789!?,.():- ",

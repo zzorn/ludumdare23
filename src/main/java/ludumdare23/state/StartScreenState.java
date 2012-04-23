@@ -2,6 +2,7 @@ package ludumdare23.state;
 
 import ludumdare23.Game;
 import net.zzorn.gameflow.input.InputStatus;
+import net.zzorn.gameflow.input.MouseButton;
 
 /**
  *
@@ -72,6 +73,11 @@ public class StartScreenState extends BaseGameState {
 
     @Override
     public void onKeyPressed(int key, InputStatus inputStatus, double durationSeconds) {
+        getStateManager().changeState("Playing");
+    }
+
+    @Override
+    public void onMouseButtonPressed(MouseButton button, int x, int y, InputStatus inputStatus, double durationSeconds) {
         getStateManager().changeState("Playing");
     }
 }

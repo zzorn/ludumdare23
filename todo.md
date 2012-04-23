@@ -24,8 +24,8 @@ Enemy waves
 
 
 Life tracking
-* Health bar for player
-* Health bar for planet
+* [DONE] Health bar for player
+* [DONE] Health bar for planet
 * Larger explosion for player
 * Larger explosion balls and more of them for planet
 
