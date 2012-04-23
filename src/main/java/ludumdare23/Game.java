@@ -195,7 +195,7 @@ public class Game extends GameBase {
         // Create players ship
         player = new PlayerShip(this, planet, this.pictureStore().get("images/playership.png", 2.0));
         inputHandler().addListener(player);
-        player.setWeapon(new Weapon(planet, playerBulletGroup, 0.08, 10, 1500, 1, Color.CYAN, 8, 0.5, 500, 25));
+        player.setWeapon(new Weapon(planet, playerBulletGroup, 0.08, 10, 1000, 1, Color.CYAN, 10, 0.5, 500, 20));
         player.setMaxHitPoints(300);
         player.setHitPoints(300);
         playerGroup.add(player);

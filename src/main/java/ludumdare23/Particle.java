@@ -15,10 +15,12 @@ public class Particle extends Entity3D {
     private final Planet planet;
     private Color color;
     private double radius = 10;
+    private double originalRadius = 10;
     private double prevSurfaceDist = 1;
     private double airResistanceAmount = 10.0;
     private boolean onSurface = false;
     private double lifeTimeLeft = 10.0;
+    private double initialLifetime = 10.0;
     private final Color deadColor = new Color(152, 68, 9);
     private double damage = 0;
 
@@ -38,11 +40,13 @@ public class Particle extends Entity3D {
     public Particle(Planet planet, Vec3 startPos, double radius, Vec3 velocity, double mass_kg, Color color, double airResistanceAmount, double damage, double lifeTimeLeft) {
         this.planet = planet;
         this.radius = radius;
+        this.originalRadius = radius;
         this.mass_kg = mass_kg;
         this.color = color;
         this.airResistanceAmount = airResistanceAmount;
         this.damage = damage;
         this.lifeTimeLeft = lifeTimeLeft;
+        this.initialLifetime = lifeTimeLeft;
         pos().set(startPos);
         velocity().set(velocity);
 
@@ -126,6 +130,12 @@ public class Particle extends Entity3D {
             Vec3 normal = planet.normalAt(pos());
             normal.setMul(surfaceDist);
             pos().setMinus(normal);
+        }
+
+        // Shrink particle when it is nearing death
+        double relativeLifetime = (initialLifetime - lifeTimeLeft) / initialLifetime;
+        if (relativeLifetime > 0.5 && relativeLifetime < 1.0) {
+            radius = originalRadius * (0.5 + 0.5 * Math.cos(2.0*(relativeLifetime - 0.5)*Math.PI));
         }
 
         // Remove when particle is too old
