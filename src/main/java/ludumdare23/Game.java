@@ -49,6 +49,7 @@ public class Game extends GameBase {
     private Planet planet = new Planet();
     private Random random = new Random(42);
 
+
     private final CollisionHandler<Particle, Damageable> BULLET_COLLISION_HANDLER = new CollisionHandler<Particle, Damageable>(){
         public void onCollision(Particle bullet, Damageable damageable) {
             boolean wasDestroyed = damageable.isDestroyed();
@@ -60,6 +61,7 @@ public class Game extends GameBase {
             }
         }
     };
+    private HudFacet hudFacet;
 
     public Game() {
         super("LD23", 300.0, 800, 600, "", null);
@@ -81,6 +83,10 @@ public class Game extends GameBase {
 
     public Planet getPlanet() {
         return planet;
+    }
+
+    public HudFacet getHudFacet() {
+        return hudFacet;
     }
 
     /**
@@ -105,6 +111,10 @@ public class Game extends GameBase {
         addFacet(playerBulletGroup);
         addFacet(enemyGroup);
         addFacet(playerGroup);
+
+        // HUD
+        hudFacet = new HudFacet(this);
+        addFacet(hudFacet);
 
         // Setup message screen
         messageScreen = new MessageScreenFacet(font);
@@ -182,6 +192,7 @@ public class Game extends GameBase {
         planet.setMaxHitPoints(4000);
         planet.setHitPoints(4000);
         planetGroup.add(planet);
+        hudFacet.setPlanet(planet);
     }
 
     public void createPlayer() {
@@ -193,6 +204,7 @@ public class Game extends GameBase {
         player.setHitPoints(300);
         playerGroup.add(player);
         getTrackingCamera().setTrackedEntity(player);
+        hudFacet.setPlayer(player);
     }
 
     public void createEnemies() {

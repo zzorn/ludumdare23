@@ -19,6 +19,10 @@ public abstract class BaseEntity extends InputListenerAdapter implements Entity,
     private double hitPoints = maxHitPoints;
     private boolean destroyed = false;
 
+    public double getHitPointsPercent() {
+        return Math.min(1, Math.max(0, hitPoints / maxHitPoints));
+    }
+
     public double getHitPoints() {
         return hitPoints;
     }

@@ -45,6 +45,7 @@ public class StartScreenState extends BaseGameState {
                 "Press any key to start...",
                 0, 1.5, 4.0);
 
+        game.getHudFacet().setVisible(false);
         game.loadLevel(1);
 
         camYTarget = -getGame().getPlanet().getRadius() - Game.PLAYER_FLIGHT_HEIGHT;
@@ -65,6 +66,7 @@ public class StartScreenState extends BaseGameState {
     @Override
     public void onExit(GameStateManager manager, Game game) {
         game.getMessageScreen().clearMessage();
+        game.getHudFacet().setVisible(true);
         game.createPlayer();
     }
 
