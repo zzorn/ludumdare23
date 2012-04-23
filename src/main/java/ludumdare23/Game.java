@@ -96,8 +96,8 @@ public class Game extends GameBase {
                 "images/spacefont.png"),
                 8,
                 11,
-                "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ0123456789!?,.():- ",
-                "abcdefghijklmnopqrstuvwxyzåäö0123456789!?,.[];_ ",
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ0123456789!?,.():- abcdefghijklmnopqrstuvwxyzåäö",
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ0123456789!?,.[];_ abcdefghijklmnopqrstuvwxyzåäö",
                 12*4-1);
 
         // Setup entity groups (in drawing order)
