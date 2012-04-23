@@ -46,19 +46,15 @@ public class Game extends GameBase {
 
     private PlayerShip player = null;
 
-    private Planet planet = new Planet();
+    private Planet planet = null;
     private Random random = new Random(42);
 
 
     private final CollisionHandler<Particle, Damageable> BULLET_COLLISION_HANDLER = new CollisionHandler<Particle, Damageable>(){
         public void onCollision(Particle bullet, Damageable damageable) {
             boolean wasDestroyed = damageable.isDestroyed();
-            damageable.damage(bullet.getDamage());
+            damageable.damage(bullet.getDamage(), bullet.pos());
             bullet.remove();
-
-            if (!wasDestroyed && damageable.isDestroyed()) {
-                makeExplosionParticles(planet, effectsGroup, damageable.getMaxHitPoints(), damageable.pos(), damageable.velocity());
-            }
         }
     };
     private HudFacet hudFacet;
@@ -97,7 +93,7 @@ public class Game extends GameBase {
 
         // Create font
         font = new FixedBitmapFont(pictureStore().getImage(
-                "images/spacefont-shadowed.png"),
+                "images/spacefont.png"),
                 8,
                 11,
                 "ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ0123456789!?,.():- ",
@@ -187,7 +183,7 @@ public class Game extends GameBase {
 
     public void loadLevel(int levelNum) {
         // Create planet
-        planet = new Planet();
+        planet = new Planet(this);
 
         planet.setMaxHitPoints(4000);
         planet.setHitPoints(4000);
@@ -240,7 +236,7 @@ public class Game extends GameBase {
         double enginePower = randomValue(10, 1000);
         double shootDistance = randomValue(200, 5000);
         Picture picture = pictureStore().get(image, 2.0);
-        EnemyShip enemyShip = new EnemyShip(planet, target, picture, startPos, startVelocity, enginePower, maxSpeed, brakeDistance, maxBrakeAcc, shootDistance);
+        EnemyShip enemyShip = new EnemyShip(this, planet, target, picture, startPos, startVelocity, enginePower, maxSpeed, brakeDistance, maxBrakeAcc, shootDistance);
         enemyShip.setWeapon(weapon);
         return enemyShip;
     }
@@ -282,22 +278,25 @@ public class Game extends GameBase {
     }
 
 
-    private void makeExplosionParticles(Planet planet, EntityGroup<Particle> group, double size, Vec3 pos, Vec3 velocity) {
-        if (size > 0) {
-            double intensity = size / (size + 1.0);
-            double amount  = gaussianValue(size*2, 0.2, 3, 25);
-            for (int i = 0; i < (int) amount; i++) {
-                double radius = gaussianValue(intensity *20, 0.3, 1, 100);
-                double mass = gaussianValue(5, 0.3, 0.1, 100);
-                double lifeTime = gaussianValue(3, 0.8, 0.1, 10);
-                //double damage = gaussianValue(intensity, 0.2, 0, 100);
-                double damage = 0;
-                double airDrag = gaussianValue(10000, 1.0, 0.1, 100000);
-                Vec3 vel = createRandomVec(gaussianValue(intensity *300, 0.8, 1, 2000));
-                vel.setPlus(velocity);
-                Color color = createRandomColor(0.1, 0.02, 0.3, 0.3, 0.4, 0.1);
-                group.add(new Particle(planet, pos, radius, vel, mass, color, airDrag, damage, lifeTime));
-            }
+    public void spawnExplosion(Vec3 pos, Vec3 velocity, double area, double particleSize, double particleAmount, double particleHeat, double particleLifeTime, double speed) {
+        double amount  = gaussianValue(particleAmount, 0.3, 1, 100);
+        double heat = Math.min(1, Math.max(0, particleHeat));
+        for (int i = 0; i < (int) amount; i++) {
+            double radius = gaussianValue(particleSize, 0.4, 1, 1000);
+            double lifeTime = gaussianValue(particleLifeTime, 1, 0.1, 1000);
+            double mass = gaussianValue(5, 0.3, 0.1, 100);
+            double airDrag = gaussianValue(10000, 1.0, 0.1, 100000);
+            double damage = 0;
+            Vec3 vel = createRandomVec(gaussianValue(speed, 0.8, 0, 3000));
+            vel.setPlus(velocity);
+            Vec3 p = createRandomVec(gaussianValue(area, 0.2, 0, 3000));
+            p.setPlus(pos);
+            Color color = createRandomColor(
+                    0.01+ heat*0.2, 0.01,
+                    0.3 + heat*0.8, 0.2,
+                    0.4 +heat*0.35, 0.1);
+            effectsGroup.add(new Particle(getPlanet(), p, radius, vel, mass, color, airDrag, damage, lifeTime));
         }
     }
+
 }

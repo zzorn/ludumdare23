@@ -2,6 +2,7 @@ package ludumdare23.state;
 
 import ludumdare23.Game;
 import net.zzorn.gameflow.input.InputStatus;
+import net.zzorn.gameflow.input.MouseButton;
 
 /**
  *
@@ -35,12 +36,14 @@ public class StartScreenState extends BaseGameState {
                 "It is time to stand up and defend the planets!\n" +
                 "\n" +
                 "  Controls:\n" +
-                "    X, C:       Drive (counter) clockwise around planet, or\n"+
-                "    W, A, S, D: Drive in direction around planet.\n" +
+                "    A, D:       Drive (counter) clockwise around planet.\n"+
                 "    Aim with mouse, fire with SPACE or left mouse.\n" +
+                "    ESC: exit.\n" +
                 "\n" +
                 "    You can also zoom with PGUP, PGDOWN, Mouse wheel.\n" +
-                "    ESC: exit.\n" +
+                "    And if you don't like clockwise controls, \n" +
+                "    you can use arrow keys to move around the planet.\n" +
+                "\n" +
                 "\n" +
                 "Press any key to start...",
                 0, 1.5, 4.0);
@@ -72,6 +75,11 @@ public class StartScreenState extends BaseGameState {
 
     @Override
     public void onKeyPressed(int key, InputStatus inputStatus, double durationSeconds) {
+        getStateManager().changeState("Playing");
+    }
+
+    @Override
+    public void onMouseButtonPressed(MouseButton button, int x, int y, InputStatus inputStatus, double durationSeconds) {
         getStateManager().changeState("Playing");
     }
 }

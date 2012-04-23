@@ -19,6 +19,16 @@ public abstract class BaseEntity extends InputListenerAdapter implements Entity,
     private double hitPoints = maxHitPoints;
     private boolean destroyed = false;
 
+    private final Game game;
+
+    public Game getGame() {
+        return game;
+    }
+
+    protected BaseEntity(Game game) {
+        this.game = game;
+    }
+
     public double getHitPointsPercent() {
         return Math.min(1, Math.max(0, hitPoints / maxHitPoints));
     }
@@ -43,7 +53,7 @@ public abstract class BaseEntity extends InputListenerAdapter implements Entity,
         return destroyed;
     }
 
-    public void damage(double amount) {
+    public void damage(double amount, Vec3 pos) {
         hitPoints -= amount;
         if (!destroyed && hitPoints <= 0) {
             destroyed = true;

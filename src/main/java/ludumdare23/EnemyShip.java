@@ -22,8 +22,10 @@ public class EnemyShip extends Ship {
     // brake multiply
     private double brake =-1;
 
+    private double explosionSize = 0.5;
 
-    public EnemyShip(Planet planet, Entity target, Picture picture, Vec3 startPos, Vec3 startVelocity, double maxThrust, double maxSpeed, double brakeDistance, double maxBrakeAcc, double shootDistance) {
+    public EnemyShip(Game game, Planet planet, Entity target, Picture picture, Vec3 startPos, Vec3 startVelocity, double maxThrust, double maxSpeed, double brakeDistance, double maxBrakeAcc, double shootDistance) {
+        super(game);
         this.planet = planet;
         this.target = target;
         this.picture = picture;
@@ -110,6 +112,8 @@ public class EnemyShip extends Ship {
 
     @Override
     protected void onDestroyed() {
+        getGame().spawnExplosion(pos(), velocity(), getRadius(), 60*explosionSize, 40*explosionSize, 0.8*explosionSize, 8*explosionSize, 300*explosionSize);
+        getGame().spawnExplosion(pos(), velocity(), getRadius(), 40*explosionSize, 10*explosionSize, 0.4 + 0.4*explosionSize, 4*explosionSize, 1500*explosionSize);
         remove();
     }
 }
