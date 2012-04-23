@@ -29,6 +29,12 @@ public abstract class BaseEntity extends InputListenerAdapter implements Entity,
         this.game = game;
     }
 
+    @Override
+    public void restoreLife() {
+        hitPoints = maxHitPoints;
+        destroyed = false;
+    }
+
     public double getHitPointsPercent() {
         return Math.min(1, Math.max(0, hitPoints / maxHitPoints));
     }

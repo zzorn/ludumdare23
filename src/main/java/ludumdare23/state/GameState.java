@@ -19,4 +19,6 @@ public interface GameState extends InputListener {
     void setGame(Game game);
 
     void setStateManager(GameStateManager stateManager);
+
+    boolean isAllowReEntry();
 }

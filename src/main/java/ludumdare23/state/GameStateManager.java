@@ -36,16 +36,22 @@ public class GameStateManager extends BaseFacet implements InputListener {
     @Override
     public void update(double durationSeconds) {
         if (nextStateName != null) {
-            // Exit old state
-            if (activeState != null) activeState.onExit(this, game);
-
             // Get new state
-            activeState = states.get(nextStateName);
-            if (activeState == null && nextStateName != "") throw new Error("Unknown next game state name '"+nextStateName+"'");
-            nextStateName = null;
+            GameState newState = states.get(nextStateName);
+            if (newState  == null && !nextStateName.isEmpty()) throw new Error("Unknown next game state name '"+nextStateName+"'");
 
-            // Enter new state
-            if (activeState != null) activeState.onEnter(this, game);
+            if (activeState != newState || (activeState != null && activeState.isAllowReEntry())) {
+                // Exit old state
+                if (activeState != null) activeState.onExit(this, game);
+
+                // Set new state
+                activeState = newState;
+                nextStateName = null;
+
+                // Enter new state
+                if (activeState != null) activeState.onEnter(this, game);
+            }
+
         }
 
         // Update current state

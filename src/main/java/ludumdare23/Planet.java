@@ -16,8 +16,11 @@ import java.util.Random;
  * A home-world to defend
  */
 public class Planet extends  BaseEntity {
-    private double mass_kg = 10E18;
-    private double radius_m = 1000;
+    private double originalMass = 10E18;
+    private double originalRadius = 1000;
+
+    private double mass_kg = originalMass;
+    private double radius_m = originalRadius;
     private final Picture picture;
 
     public Planet(Game game) {
@@ -145,14 +148,14 @@ public class Planet extends  BaseEntity {
             // Not destroyed yet, but show hit explosion
             double intensity = amount / (amount + 30.0);
             Vec3 p = normalAt(pos);
-            p.setMul(getRadius() + 40);
+            p.setMul(getRadius() + 50);
             Vec3 vec = normalAt(pos);
-            vec.setMul(100*intensity);
+            vec.setMul(1000*intensity);
             getGame().spawnExplosion(
                     p,
                     vec,
                     10*intensity,
-                    50*intensity,
+                    200*intensity*intensity,
                     10*intensity,
                     intensity,
                     20*intensity,
@@ -169,5 +172,12 @@ public class Planet extends  BaseEntity {
         radius_m = 0.1;
         mass_kg = 0.1;
         remove();
+        getGame().getGameStateManager().changeState("GameOver");
+    }
+
+    public void restore() {
+        restoreLife();
+        radius_m = originalRadius;
+        mass_kg = originalMass;
     }
 }

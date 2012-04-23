@@ -1,5 +1,6 @@
 package ludumdare23;
 
+import ludumdare23.state.GameOverState;
 import ludumdare23.state.GameStateManager;
 import ludumdare23.state.PlayingLevelState;
 import ludumdare23.state.StartScreenState;
@@ -49,6 +50,8 @@ public class Game extends GameBase {
     private Planet planet = null;
     private Random random = new Random(42);
 
+    private int level = 1;
+
 
     private final CollisionHandler<Particle, Damageable> BULLET_COLLISION_HANDLER = new CollisionHandler<Particle, Damageable>(){
         public void onCollision(Particle bullet, Damageable damageable) {
@@ -72,9 +75,17 @@ public class Game extends GameBase {
         return trackingCamera;
     }
 
+    public int getLevel() {
+        return level;
+    }
+
     public static void main(String[] args) {
         Game game = new Game();
         game.start();
+    }
+
+    public GameStateManager getGameStateManager() {
+        return gameStateManager;
     }
 
     public Planet getPlanet() {
@@ -131,6 +142,7 @@ public class Game extends GameBase {
         addFacet(gameStateManager);
         gameStateManager.addState(new StartScreenState());
         gameStateManager.addState(new PlayingLevelState());
+        gameStateManager.addState(new GameOverState());
         gameStateManager.changeState("StartScreen");
 
 
@@ -182,6 +194,10 @@ public class Game extends GameBase {
     }
 
     public void loadLevel(int levelNum) {
+        level = levelNum;
+        planetGroup.clear();
+        clearEntities();
+
         // Create planet
         planet = new Planet(this);
 
@@ -189,6 +205,30 @@ public class Game extends GameBase {
         planet.setHitPoints(4000);
         planetGroup.add(planet);
         hudFacet.setPlanet(planet);
+
+    }
+
+    public void nextLevel() {
+        player.resetAtLevelStart();
+        loadLevel(level + 1);
+    }
+
+    public void restartLevel() {
+        clearEntities();
+
+        planetGroup.clear();
+        planet.restore();
+        planetGroup.add(planet);
+
+        playerGroup.clear();
+        createPlayer();
+    }
+
+    private void clearEntities() {
+        effectsGroup.clear();
+        enemyGroup.clear();
+        enemyBulletGroup.clear();
+        playerBulletGroup.clear();
     }
 
     public void createPlayer() {

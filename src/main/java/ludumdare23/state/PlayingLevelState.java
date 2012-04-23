@@ -3,15 +3,13 @@ package ludumdare23.state;
 import ludumdare23.Game;
 import net.zzorn.gameflow.input.InputStatus;
 
-import java.awt.event.KeyEvent;
-
 /**
  *
  */
 public class PlayingLevelState extends BaseGameState {
 
     public PlayingLevelState() {
-        super("Playing");
+        super("Playing", false);
     }
 
     @Override

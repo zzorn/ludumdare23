@@ -9,11 +9,13 @@ import net.zzorn.gameflow.input.MouseButton;
  */
 public class BaseGameState implements GameState {
     private final String name;
+    private final boolean allowReEntry;
     private Game game;
     private GameStateManager stateManager;
 
-    public BaseGameState(String name) {
+    public BaseGameState(String name, boolean allowReEntry) {
         this.name = name;
+        this.allowReEntry = allowReEntry;
     }
 
     public Game getGame() {
@@ -23,6 +25,11 @@ public class BaseGameState implements GameState {
     @Override
     public void setGame(Game game) {
         this.game = game;
+    }
+
+    @Override
+    public boolean isAllowReEntry() {
+        return allowReEntry;
     }
 
     public GameStateManager getStateManager() {

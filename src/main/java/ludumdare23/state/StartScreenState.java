@@ -18,7 +18,7 @@ public class StartScreenState extends BaseGameState {
     private double camYStart = 0;
 
     public StartScreenState() {
-        super("StartScreen");
+        super("StartScreen", false);
     }
 
     @Override

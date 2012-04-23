@@ -34,7 +34,17 @@ public class PlayerShip extends Ship {
     private double angSlow = 3;
     private final Picture picture;
     private boolean firePressed = false;
+    private boolean controlsEnabled = true;
     private Vec3 target = new Vec3(0,0,0);
+
+    public void setControlsEnabled(boolean controlsEnabled) {
+        this.controlsEnabled = controlsEnabled;
+
+        if (!controlsEnabled) {
+            angAcc = 0;
+            firePressed = false;
+        }
+    }
 
     public PlayerShip(Game game, Planet planet, Picture picture) {
         super(game);
@@ -74,7 +84,7 @@ public class PlayerShip extends Ship {
     }
 
     public void resetAtLevelStart() {
-        setHitPoints(getMaxHitPoints());
+        restoreLife();
         angle = 270;
         angVelosity = 0;
         angAcc = 0;
@@ -82,59 +92,61 @@ public class PlayerShip extends Ship {
 
 
     public void onKeysUpdated(InputStatus inputStatus, double durationSeconds) {
-        angAcc=0;
+        if (controlsEnabled) {
+            angAcc=0;
 
-        boolean clockwise = false;
-        boolean counterClockwise = false;
+            boolean clockwise = false;
+            boolean counterClockwise = false;
 
-        if (inputStatus.isKeyHeld(rightKey)) {
-            if (angle>=270) clockwise = true;
-            if (angle>=0 && angle<90) counterClockwise = true;
-            if (angle>=90 && angle<180) counterClockwise = true;
-            if (angle>=180 && angle<270) clockwise = true;
+            if (inputStatus.isKeyHeld(rightKey)) {
+                if (angle>=270) clockwise = true;
+                if (angle>=0 && angle<90) counterClockwise = true;
+                if (angle>=90 && angle<180) counterClockwise = true;
+                if (angle>=180 && angle<270) clockwise = true;
+            }
+
+            if (inputStatus.isKeyHeld(leftKey))  {
+                if (angle>=270) counterClockwise = true;
+                if (angle>=0 && angle<90) clockwise = true;
+                if (angle>=90 && angle<180) clockwise = true;
+                if (angle>=180 && angle<270) counterClockwise = true;
+
+            }
+
+            if (inputStatus.isKeyHeld(upKey))  {
+                if (angle>=270) counterClockwise = true;
+                if (angle>=0 && angle<90) counterClockwise = true;
+                if (angle>=90 && angle<180) clockwise = true;
+                if (angle>=180 && angle<270) clockwise = true;
+
+            }
+
+            if (inputStatus.isKeyHeld(downKey))  {
+                if (angle>=270) clockwise = true;
+                if (angle>=0 && angle<90) clockwise = true;
+                if (angle>=90 && angle<180) counterClockwise = true;
+                if (angle>=180 && angle<270) counterClockwise = true;
+
+            }
+
+            if (inputStatus.isKeyHeld(clockwiseKey) || inputStatus.isKeyHeld(clockwiseKey2)) clockwise = true;
+            if (inputStatus.isKeyHeld(counterclockwiseKey) || inputStatus.isKeyHeld(counterclockwiseKey2)) counterClockwise = true;
+
+            if (clockwise)        angAcc += maxAngAcc;
+            if (counterClockwise) angAcc -= maxAngAcc;
+
+            firePressed = inputStatus.isKeyHeld(fireKey) || inputStatus.isMouseButtonHeld(fireButton);
         }
-
-        if (inputStatus.isKeyHeld(leftKey))  {
-            if (angle>=270) counterClockwise = true;
-            if (angle>=0 && angle<90) clockwise = true;
-            if (angle>=90 && angle<180) clockwise = true;
-            if (angle>=180 && angle<270) counterClockwise = true;
-
-        }
-
-        if (inputStatus.isKeyHeld(upKey))  {
-            if (angle>=270) counterClockwise = true;
-            if (angle>=0 && angle<90) counterClockwise = true;
-            if (angle>=90 && angle<180) clockwise = true;
-            if (angle>=180 && angle<270) clockwise = true;
-
-        }
-
-        if (inputStatus.isKeyHeld(downKey))  {
-            if (angle>=270) clockwise = true;
-            if (angle>=0 && angle<90) clockwise = true;
-            if (angle>=90 && angle<180) counterClockwise = true;
-            if (angle>=180 && angle<270) counterClockwise = true;
-
-        }
-
-        if (inputStatus.isKeyHeld(clockwiseKey) || inputStatus.isKeyHeld(clockwiseKey2)) clockwise = true;
-        if (inputStatus.isKeyHeld(counterclockwiseKey) || inputStatus.isKeyHeld(counterclockwiseKey2)) counterClockwise = true;
-
-        if (clockwise)        angAcc += maxAngAcc;
-        if (counterClockwise) angAcc -= maxAngAcc;
-
-        firePressed = inputStatus.isKeyHeld(fireKey) || inputStatus.isMouseButtonHeld(fireButton);
     }
 
     @Override
     public void onKeyPressed(int key, InputStatus inputStatus, double durationSeconds) {
-        if (key == fireKey) onFirePressed();
+        if (controlsEnabled && key == fireKey) onFirePressed();
     }
 
     @Override
     public void onMouseButtonPressed(MouseButton button, int x, int y, InputStatus inputStatus, double durationSeconds) {
-        if (button == fireButton) onFirePressed();
+        if (controlsEnabled && button == fireButton) onFirePressed();
     }
 
     private void onFirePressed() {
@@ -156,8 +168,9 @@ public class PlayerShip extends Ship {
 
     @Override
     protected void onDestroyed() {
-        getGame().spawnExplosion(pos(), velocity(), getRadius(), 80, 60, 0.6, 14, 600);
-        getGame().spawnExplosion(pos(), velocity(), getRadius(), 25, 10, 1, 6, 1500);
+        getGame().spawnExplosion(pos(), velocity(), getRadius(), 80, 60, 0.6, 6, 600);
+        getGame().spawnExplosion(pos(), velocity(), getRadius(), 25, 10, 1, 10, 1500);
         remove();
+        getGame().getGameStateManager().changeState("GameOver");
     }
 }

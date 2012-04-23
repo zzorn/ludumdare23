@@ -16,4 +16,6 @@ public interface Damageable extends Entity {
 
     boolean isDestroyed();
 
+    void restoreLife();
+
 }

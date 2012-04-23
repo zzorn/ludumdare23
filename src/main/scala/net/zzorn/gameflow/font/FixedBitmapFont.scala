@@ -44,11 +44,13 @@ class FixedBitmapFont(fontBitmap: BufferedImage, charWidth: Int, charHeight: Int
   }
 
   def textWidth(text: String, scale: Double = 1.0): Int = {
-    text.lines.map(_.length()).max * ((charWidth * scale).toInt)
+    if (text == null || text.isEmpty) 0
+    else text.lines.map(_.length()).max * ((charWidth * scale).toInt)
   }
 
   def textHeight(text: String, scale: Double): Int = {
-    (text.count(_ == '\n') + 1) * ((charHeight * scale).toInt)
+    if (text == null || text.isEmpty) 0
+    else (text.count(_ == '\n') + 1) * ((charHeight * scale).toInt)
   }
 
   def drawText(g: Graphics2D, text: String, x: Double, y: Double, xAlign: Double=0, yAlign: Double=0, scale: Double=1) {

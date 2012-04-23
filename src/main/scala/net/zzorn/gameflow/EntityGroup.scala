@@ -33,6 +33,10 @@ class EntityGroup[T <: Entity]() extends Facet {
     _entitiesToAdd.remove(entity)
   }
 
+  final def clear() {
+    _entitiesToRemove.addAll(_entities)
+  }
+
   def getColliding(other: T): T = {
     _entities foreach {entity =>
       if (other.overlaps(entity)) return entity
@@ -114,7 +118,5 @@ class EntityGroup[T <: Entity]() extends Facet {
   protected def onEntityAdded(entity: T) {}
 
   protected def onEntityRemoved(entity: T) {}
-
-
 
 }
