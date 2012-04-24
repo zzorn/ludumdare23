@@ -270,7 +270,7 @@ public class Game extends GameBase {
             enemyGroup.add(createEnemy(planet, player, "images/enemyship4.png", 700, 1,
                     createWeapon(planet, 0.05, 12.0, 1200.0, new Color(255, 200, 0), 10, 3, 5), 2.0, 200));
         }
-        if (level >= 5) for (int i = 0; i < (int)(0.1*number); i++) {
+        if (level >= 5) for (int i = 0; i < (int)(0.05*number); i++) {
             enemyGroup.add(createEnemy(planet, planet, "images/mothership1.png", 1000, 1,
                     createWeapon(planet, 1, 30.0, 1000.0, new Color(255, 255, 0), 3, 5, 50), 8.0, 400));
         }
