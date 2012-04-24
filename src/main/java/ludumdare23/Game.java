@@ -36,7 +36,7 @@ public class Game extends GameBase {
     private MessageScreenFacet messageScreen = null;
     private GameStateManager gameStateManager = null;
 
-    private final TrackingCamera trackingCamera = new TrackingCamera(null, 0.5, 3);
+    private final TrackingCamera trackingCamera = new TrackingCamera(null, 0.55, 3);
     private final double minCameraScale = 0.2;
     private final double maxCameraScale = 0.6;
 
