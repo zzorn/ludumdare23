@@ -29,13 +29,12 @@ public class Weapon {
     private Color shotColor = Color.ORANGE;
     private double totalSeconds = 0;
 
-    public Weapon(Planet planet, EntityGroup<Particle> bulletGroup, double coolDownTime, double shotSize, double shotSpeed, double shotMass, Color shotColor, int clipSize, double clipReloadTime, double shotAirResistance, double shotDamage) {
+    public Weapon(Planet planet, EntityGroup<Particle> bulletGroup, double coolDownTime, double shotSize, double shotSpeed, Color shotColor, int clipSize, double clipReloadTime, double shotAirResistance, double shotDamage) {
         this.planet = planet;
         this.bulletGroup = bulletGroup;
         this.coolDownTime = coolDownTime;
         this.shotSize = shotSize;
         this.shotSpeed = shotSpeed;
-        this.shotMass = shotMass;
         this.shotColor = shotColor;
         this.clipSize = clipSize;
         this.clipReloadTime = clipReloadTime;

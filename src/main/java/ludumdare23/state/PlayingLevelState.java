@@ -14,8 +14,7 @@ public class PlayingLevelState extends BaseGameState {
 
     @Override
     public void onEnter(GameStateManager manager, Game game) {
-        game.getPlayer().resetAtLevelStart();
-        game.createEnemies();
+        game.startLevel();
     }
 
     @Override
@@ -25,7 +24,7 @@ public class PlayingLevelState extends BaseGameState {
     @Override
     public void update(GameStateManager manager, Game game, double durationSeconds) {
         // Check if all waves done
-        // TODO
+        if (getGame().isLevelCleared()) manager.changeState("LevelCompleted");
     }
 
     @Override

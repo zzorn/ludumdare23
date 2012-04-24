@@ -23,9 +23,9 @@ public class Planet extends  BaseEntity {
     private double radius_m = originalRadius;
     private final Picture picture;
 
-    public Planet(Game game) {
+    public Planet(Game game, Random random) {
         super(game);
-        picture = createPicture(42, (int)radius_m*2);
+        picture = createPicture(random, (int)radius_m*2);
     }
 
     public double getRadius() {
@@ -75,8 +75,7 @@ public class Planet extends  BaseEntity {
 
 
 
-    private Picture createPicture(long seed, int size) {
-        Random random = new Random(seed);
+    private Picture createPicture(Random random, int size) {
 
         int rawImageSize = size / 8;
         RawImage rawImage = new RawImage(rawImageSize , rawImageSize );
@@ -93,6 +92,8 @@ public class Planet extends  BaseEntity {
         int colorAtmosphereTop = ColorUtils$.MODULE$.HSLtoRGB(0.6, 0.5, 0.5, 0.0);
         int colorSpaceTop = ColorUtils$.MODULE$.HSLtoRGB(0.7, 0, 0, 0.0);
 
+        double offset = random.nextGaussian() * 10;
+
         int i =0;
         for (int y = 0; y < rawImageSize; y++) {
             for (int x = 0; x < rawImageSize; x++) {
@@ -102,10 +103,10 @@ public class Planet extends  BaseEntity {
 
                 // Calculate color depending on what layer we are in
                 int color;
-                if (     pixelHeight < calculateLayerHeight(rx, ry, 0.1, 0.03, 0.05)) color = mixColor(pixelHeight, 0.01, 0.1, colorCoreBot, colorCoreTop);
-                else if (pixelHeight < calculateLayerHeight(rx, ry, 0.3, 0.2, 0.15))  color = mixColor(pixelHeight, 0.1, 0.4, colorCenterBot, colorCenterTop);
-                else if (pixelHeight < calculateLayerHeight(rx, ry, 0.45, 0.1, 0.1))  color = mixColor(pixelHeight, 0.3, 0.5, colorCrustBot, colorCrustTop);
-                else if (pixelHeight < calculateLayerHeight(rx, ry, 0.6, 0.03, 0.25)) color = mixColor(pixelHeight, 0.4, 0.63, colorGrassBot, colorGrassTop);
+                if (     pixelHeight < calculateLayerHeight(offset, rx, ry, 0.1, 0.03, 0.05)) color = mixColor(pixelHeight, 0.01, 0.1, colorCoreBot, colorCoreTop);
+                else if (pixelHeight < calculateLayerHeight(offset, rx, ry, 0.3, 0.2, 0.15))  color = mixColor(pixelHeight, 0.1, 0.4, colorCenterBot, colorCenterTop);
+                else if (pixelHeight < calculateLayerHeight(offset, rx, ry, 0.45, 0.1, 0.1))  color = mixColor(pixelHeight, 0.3, 0.5, colorCrustBot, colorCrustTop);
+                else if (pixelHeight < calculateLayerHeight(offset, rx, ry, 0.6, 0.03, 0.25)) color = mixColor(pixelHeight, 0.4, 0.63, colorGrassBot, colorGrassTop);
                 else if (pixelHeight < 0.7)                                           color = mixColor(pixelHeight, 0.6, 0.7, colorAtmosphereBase, colorAtmosphereTop);
                 else                                                                  color = mixColor(pixelHeight, 0.7, 1.0, colorAtmosphereTop, colorSpaceTop);
 
@@ -118,8 +119,8 @@ public class Planet extends  BaseEntity {
         return new ScaledPicture(new BufferedImagePicture(rawImage.createBufferedImage()), 8*1.33);
     }
 
-    private double calculateLayerHeight(double rx, double ry, double baseHeight, double heightVariation, double detailSize) {
-        return baseHeight + heightVariation * SimplexNoise$.MODULE$.noise(rx / detailSize, ry / detailSize);
+    private double calculateLayerHeight(double offset, double rx, double ry, double baseHeight, double heightVariation, double detailSize) {
+        return baseHeight + heightVariation * SimplexNoise$.MODULE$.noise(offset + rx / detailSize, offset + ry / detailSize);
     }
 
     private int mixColor(double pixelHeight, double baseH, double topH, int baseColor, int topColor) {

@@ -35,6 +35,10 @@ public abstract class BaseEntity extends InputListenerAdapter implements Entity,
         destroyed = false;
     }
 
+    public Vec3 getAcc() {
+        return acc;
+    }
+
     public double getHitPointsPercent() {
         return Math.min(1, Math.max(0, hitPoints / maxHitPoints));
     }

@@ -1,9 +1,9 @@
 package ludumdare23;
 
-import ludumdare23.state.GameOverState;
-import ludumdare23.state.GameStateManager;
-import ludumdare23.state.PlayingLevelState;
-import ludumdare23.state.StartScreenState;
+import ludumdare23.enemy.CampaignFactory;
+import ludumdare23.enemy.EnemyCampaign;
+import ludumdare23.enemy.EnemyShip;
+import ludumdare23.state.*;
 import net.zzorn.gameflow.*;
 import net.zzorn.gameflow.camera.Camera;
 import net.zzorn.gameflow.camera.TrackingCamera;
@@ -12,15 +12,10 @@ import net.zzorn.gameflow.font.FixedBitmapFont;
 import net.zzorn.gameflow.input.InputListenerAdapter;
 import net.zzorn.gameflow.input.InputStatus;
 import net.zzorn.gameflow.picture.Picture;
-import net.zzorn.utils.ColorUtils$;
 import net.zzorn.utils.Vec3;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.net.URL;
 import java.util.Random;
 
 /**
@@ -51,7 +46,9 @@ public class Game extends GameBase {
     private Random random = new Random(42);
 
     private int level = 1;
+    private double levelClock = 0;
 
+    private CampaignFactory campaignFactory;
 
     private final CollisionHandler<Particle, Damageable> BULLET_COLLISION_HANDLER = new CollisionHandler<Particle, Damageable>(){
         public void onCollision(Particle bullet, Damageable damageable) {
@@ -61,6 +58,7 @@ public class Game extends GameBase {
         }
     };
     private HudFacet hudFacet;
+    private EnemyCampaign enemyCampaign;
 
     public Game() {
         super("LD23", 300.0, 800, 600, "", null);
@@ -94,6 +92,10 @@ public class Game extends GameBase {
 
     public HudFacet getHudFacet() {
         return hudFacet;
+    }
+
+    public EntityGroup<Particle> getEnemyBulletGroup() {
+        return enemyBulletGroup;
     }
 
     /**
@@ -143,6 +145,7 @@ public class Game extends GameBase {
         gameStateManager.addState(new StartScreenState());
         gameStateManager.addState(new PlayingLevelState());
         gameStateManager.addState(new GameOverState());
+        gameStateManager.addState(new NextLevelState());
         gameStateManager.changeState("StartScreen");
 
 
@@ -170,6 +173,9 @@ public class Game extends GameBase {
         enemyBulletGroup.onCollideWith(playerGroup, BULLET_COLLISION_HANDLER);
         playerBulletGroup.onCollideWith(planetGroup, BULLET_COLLISION_HANDLER);
         playerBulletGroup.onCollideWith(enemyGroup, BULLET_COLLISION_HANDLER);
+
+        // Setup factory for enemies
+        campaignFactory = new CampaignFactory(random, this);
     }
 
     private void zoomCamera(int steps) {
@@ -194,12 +200,13 @@ public class Game extends GameBase {
     }
 
     public void loadLevel(int levelNum) {
+        random.setSeed(levelNum*13);
         level = levelNum;
         planetGroup.clear();
         clearEntities();
 
         // Create planet
-        planet = new Planet(this);
+        planet = new Planet(this, random);
 
         planet.setMaxHitPoints(4000);
         planet.setHitPoints(4000);
@@ -235,7 +242,9 @@ public class Game extends GameBase {
         // Create players ship
         player = new PlayerShip(this, planet, this.pictureStore().get("images/playership.png", 2.0));
         inputHandler().addListener(player);
-        player.setWeapon(new Weapon(planet, playerBulletGroup, 0.08, 10, 1000, 1, Color.CYAN, 10, 0.5, 500, 20));
+        Weapon standardWeapon = new Weapon(planet, playerBulletGroup, 0.07, 15, 800, Color.CYAN, 10, 0, 500, 25);
+        //Weapon radnWEap = CampaignFactory.createWeapon(this, playerBulletGroup, random, 0.5, 0.5, 0);
+        player.addWeapon(standardWeapon);
         player.setMaxHitPoints(300);
         player.setHitPoints(300);
         playerGroup.add(player);
@@ -243,21 +252,30 @@ public class Game extends GameBase {
         hudFacet.setPlayer(player);
     }
 
-    public void createEnemies() {
+    public void createEnemies(int level) {
+        int number = (int)(((double)level / ((double)level + 10)) * 50) + level;
+
         // Add enemies
-        for (int i = 0; i < 10; i++) {
-            // Planet shooters
-            enemyGroup.add(createPlanetEnemy(planet, planet, "images/enemyship1.png", 1500, 2,
-                    createWeapon(planet, 5, 15.0, 200.0, new Color(255, 131, 0), 1, 0, 30)));
-        }
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < (int)(0.7*number); i++) {
             // Player shooters
-            enemyGroup.add(createPlanetEnemy(planet, player, "images/enemyship2.png", 400, 10,
-                    createWeapon(planet, 0.1, 10.0, 800.0, new Color(255, 195, 0), 8, 2, 5)));
+            enemyGroup.add(createEnemy(planet, player, "images/enemyship2.png", 400, 10,
+                    createWeapon(planet, 0.1, 10.0, 800.0, new Color(255, 195, 0), 8, 2, 5), 2.0, 50));
+        }
+        for (int i = 0; i < (int)(0.3*number); i++) {
+            // Planet shooters
+            enemyGroup.add(createEnemy(planet, planet, "images/enemyship1.png", 500, 2,
+                    createWeapon(planet, 5, 15.0, 200.0, new Color(255, 131, 0), 1, 0, 30), 2.0, 100));
+        }
+        if (level >= 3) for (int i = 0; i < (int)(0.2*number); i++) {
+            enemyGroup.add(createEnemy(planet, player, "images/enemyship4.png", 700, 1,
+                    createWeapon(planet, 0.05, 12.0, 1200.0, new Color(255, 200, 0), 10, 3, 5), 2.0, 200));
+        }
+        if (level >= 5) for (int i = 0; i < (int)(0.1*number); i++) {
+            enemyGroup.add(createEnemy(planet, planet, "images/mothership1.png", 1000, 1,
+                    createWeapon(planet, 1, 30.0, 1000.0, new Color(255, 255, 0), 3, 5, 50), 8.0, 400));
         }
     }
     
-
     @Override
     public void render(Graphics2D screen, Camera camera) {
         super.render(screen, camera);
@@ -265,78 +283,87 @@ public class Game extends GameBase {
 
     }
 
-    private EnemyShip createPlanetEnemy(Planet planet, Entity target, String image, double brakeDistance, int maxBrakeAcc, Weapon weapon) {
+    private EnemyShip createEnemy(Planet planet, Entity target, String image, double brakeDistance, int maxBrakeAcc, Weapon weapon, double picScale, double hitpoints) {
 
         // Randomize enemy start position and speed
-        Vec3 startPos = createRandomVec(10000);
-        Vec3 startVelocity = createRandomVec(1000);
+        Vec3 startPos = MathUtils.createRandomVec(random, 3000);
+        Vec3 startVelocity = MathUtils.createRandomVec(random, 1000);
 
         // Create enemy ship
-        double maxSpeed = randomValue(10, 1000);
-        double enginePower = randomValue(10, 1000);
-        double shootDistance = randomValue(200, 5000);
-        Picture picture = pictureStore().get(image, 2.0);
-        EnemyShip enemyShip = new EnemyShip(this, planet, target, picture, startPos, startVelocity, enginePower, maxSpeed, brakeDistance, maxBrakeAcc, shootDistance);
-        enemyShip.setWeapon(weapon);
+        double maxSpeed = MathUtils.randomValue(random, 100, 1000);
+        double enginePower = MathUtils.randomValue(random, 100, 1000);
+        double shootDistance = MathUtils.randomValue(random, 300, 1000);
+        Picture picture = pictureStore().get(image, picScale);
+        //EnemyShip enemyShip = new EnemyShip(this, planet, target, picture, startPos, startVelocity, enginePower, maxSpeed, brakeDistance, maxBrakeAcc, shootDistance);
+        EnemyShip enemyShip = new EnemyShip(this, planet, picture, enginePower, maxSpeed, 2, brakeDistance+shootDistance, brakeDistance, target);
+        enemyShip.pos().set(startPos);
+        enemyShip.velocity().set(startVelocity);
+        enemyShip.addWeapon(weapon);
+
+        enemyShip.setMaxHitPoints(hitpoints);
+        enemyShip.setHitPoints(hitpoints);
+        /*
+        enemyShip.addBehavior(new AvoidBehavior(target, 0, 200, 1));
+        enemyShip.addBehavior(new AvoidBehavior(planet, 0, 100, 0.8));
+        enemyShip.addBehavior(new FollowBehavior(target, 100, 100000, 1));
+        enemyShip.addBehavior(new AttackBehavior(target, 0, shootDistance));
+        */
         return enemyShip;
     }
 
     private Weapon createWeapon(Planet planet, double coolDownTime, double size, double speed, Color color, double clipSize, double clipReloadTime, double damage) {
-        coolDownTime = gaussianValue(coolDownTime, 0.2, 0.01, 100);
-        size         = gaussianValue(size,         0.2, 0.01, 100);
-        damage       = gaussianValue(damage,       0.1, 0.01, 1000);
-        speed        = gaussianValue(speed,        0.2, 0,   100000);
-        clipSize     = gaussianValue(clipSize,     0.2, 1,   10000);
-        clipReloadTime = gaussianValue(clipReloadTime, 0.2, 0,   10000);
-        return new Weapon(planet, enemyBulletGroup, coolDownTime, size, speed, size * 10, color, (int) clipSize, clipReloadTime, 100000, damage);
+        coolDownTime = MathUtils.gaussianValue(random, coolDownTime, 0.2, 0.01, 100);
+        size         = MathUtils.gaussianValue(random, size, 0.2, 0.01, 100);
+        damage       = MathUtils.gaussianValue(random, damage, 0.1, 0.01, 1000);
+        speed        = MathUtils.gaussianValue(random, speed, 0.2, 0, 100000);
+        clipSize     = MathUtils.gaussianValue(random, clipSize, 0.2, 1, 10000);
+        clipReloadTime = MathUtils.gaussianValue(random, clipReloadTime, 0.2, 0, 10000);
+//        return new Weapon(planet, enemyBulletGroup, coolDownTime, size, speed, size * 10, color, (int) clipSize, clipReloadTime, 100000, damage);
+        return new Weapon(planet, enemyBulletGroup, coolDownTime, size, speed, color, (int) clipSize, clipReloadTime, 100000, damage);
     }
-
-    private double randomValue(double start, double end) {
-        return random.nextDouble() * (end - start) + start;
-    }
-
-    private double gaussianValue(double average, double deviation, double min, double max) {
-        double v = random.nextGaussian() * average * deviation + average;
-        if (v < min) return min;
-        else if (v > max) return max;
-        else return v;
-    }
-
-    private Vec3 createRandomVec(double area) {
-        Vec3 randomPos = Vec3.random();
-        randomPos.setMul(area);
-        randomPos.setZ(0);
-        return randomPos;
-    }
-
-    private Color createRandomColor(double hue, double hueVar, double sat, double satVar, double lum, double lumVar) {
-        double h = random.nextGaussian() * hueVar + hue;
-        double s = random.nextGaussian() * satVar + sat;
-        double l = random.nextGaussian() * lumVar + lum;
-
-        return new Color(ColorUtils$.MODULE$.HSLtoRGB(h, s, l, 1), false);
-    }
-
 
     public void spawnExplosion(Vec3 pos, Vec3 velocity, double area, double particleSize, double particleAmount, double particleHeat, double particleLifeTime, double speed) {
-        double amount  = gaussianValue(particleAmount, 0.3, 1, 100);
+        double amount  = MathUtils.gaussianValue(random, particleAmount, 0.3, 1, 100);
         double heat = Math.min(1, Math.max(0, particleHeat));
         for (int i = 0; i < (int) amount; i++) {
-            double radius = gaussianValue(particleSize, 0.4, 1, 1000);
-            double lifeTime = gaussianValue(particleLifeTime, 1, 0.1, 1000);
-            double mass = gaussianValue(5, 0.3, 0.1, 100);
-            double airDrag = gaussianValue(10000, 1.0, 0.1, 100000);
+            double radius = MathUtils.gaussianValue(random, particleSize, 0.4, 1, 1000);
+            double lifeTime = MathUtils.gaussianValue(random, particleLifeTime, 1, 0.1, 1000);
+            double mass = MathUtils.gaussianValue(random, 5, 0.3, 0.1, 100);
+            double airDrag = MathUtils.gaussianValue(random, 10000, 1.0, 0.1, 100000);
             double damage = 0;
-            Vec3 vel = createRandomVec(gaussianValue(speed, 0.8, 0, 3000));
+            Vec3 vel = MathUtils.createRandomVec(random, MathUtils.gaussianValue(random, speed, 0.8, 0, 3000));
             vel.setPlus(velocity);
-            Vec3 p = createRandomVec(gaussianValue(area, 0.2, 0, 3000));
+            Vec3 p = MathUtils.createRandomVec(random, MathUtils.gaussianValue(random, area, 0.2, 0, 3000));
             p.setPlus(pos);
-            Color color = createRandomColor(
-                    0.01+ heat*0.2, 0.01,
-                    0.3 + heat*0.8, 0.2,
-                    0.4 +heat*0.35, 0.1);
+            Color color = MathUtils.createRandomColor(random,
+                    0.01 + heat * 0.2, 0.01,
+                    0.3 + heat * 0.8, 0.2,
+                    0.4 + heat * 0.35, 0.1);
             effectsGroup.add(new Particle(getPlanet(), p, radius, vel, mass, color, airDrag, damage, lifeTime));
         }
     }
 
+    public void addEnemy(EnemyShip enemyShip) {
+        enemyGroup.add(enemyShip);
+    }
+
+    public void startLevel() {
+        levelClock =0;
+        getPlayer().resetAtLevelStart();
+        createEnemies(getLevel());
+        /*
+        if (enemyCampaign != null) removeFacet(enemyCampaign); // Remove old campaign
+        enemyCampaign = campaignFactory.createCampaign(getLevel());
+        addFacet(enemyCampaign);
+        */
+    }
+
+    public boolean isLevelCleared() {
+        return enemyGroup.entities().isEmpty() && levelClock > 5;
+        //return enemyCampaign.isOver();
+    }
+
+    public void update(double durationSec) {
+        levelClock += durationSec;
+    }
 }

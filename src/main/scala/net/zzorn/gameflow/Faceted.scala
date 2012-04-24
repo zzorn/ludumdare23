@@ -2,8 +2,8 @@ package net.zzorn.gameflow
 
 import camera.Camera
 import java.awt.Graphics2D
-import java.util.ArrayList
 import scala.collection.JavaConversions._
+import java.util.{LinkedHashSet, HashSet, ArrayList}
 
 /**
  * Handles facets
@@ -11,35 +11,37 @@ import scala.collection.JavaConversions._
 class FacetManager extends Facet {
 
   private var facets: ArrayList[Facet] = new ArrayList()
-  private var facetsToInit: ArrayList[Facet] = new ArrayList()
-  private var facetsToDeInit: ArrayList[Facet] = new ArrayList()
+  private var facetsToAdd: LinkedHashSet[Facet] = new LinkedHashSet()
+  private var facetsToRemove: LinkedHashSet[Facet] = new LinkedHashSet()
 
   final def addFacet(facet: Facet) {
     if (facets.contains(facet)) throw new IllegalArgumentException("Can not add facet '"+facet+"' twice")
 
-    facets.add(facet)
-    facetsToInit.add(facet)
+    facetsToAdd.add(facet)
+    facetsToRemove.remove(facet)
   }
 
   final def removeFacet(facet: Facet) {
     if (!facets.contains(facet)) throw new IllegalArgumentException("Can not remove facet '"+facet+"', not found")
 
-    facets.remove(facet)
-    facetsToDeInit.add(facet)
+    facetsToAdd.remove(facet)
+    facetsToRemove.add(facet)
   }
 
   def update(durationSeconds: Double) {
-    // Init added facets
-    facetsToDeInit foreach {facet =>
-      facet.deInit()
-    }
-    facetsToDeInit.clear()
-
     // De-init removed facets
-    facetsToInit foreach {facet =>
+    facetsToRemove foreach {facet =>
+      facet.deInit()
+      facets.remove(facet)
+    }
+    facetsToRemove.clear()
+
+    // Init added facets
+    facetsToAdd foreach {facet =>
+      facets.add(facet)
       facet.init()
     }
-    facetsToInit.clear()
+    facetsToAdd.clear()
 
     // Update contained facets
     facets foreach {facet =>

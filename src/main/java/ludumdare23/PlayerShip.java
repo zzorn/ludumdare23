@@ -47,7 +47,7 @@ public class PlayerShip extends Ship {
     }
 
     public PlayerShip(Game game, Planet planet, Picture picture) {
-        super(game);
+        super(game, 3);
         this.picture = picture;
         distance = planet.getRadius()+Game.PLAYER_FLIGHT_HEIGHT;
         this.planet = planet;
@@ -77,8 +77,8 @@ public class PlayerShip extends Ship {
         pos().setX(distance * Math.cos(angle * DEGREES_TO_RADIANS));
         pos().setY(distance * Math.sin(angle * DEGREES_TO_RADIANS));
 
-        if (firePressed && getWeapon() != null && getWeapon().isReadyToFire()) {
-            getWeapon().fire(target);
+        if (firePressed && isReadyToFire()) {
+            fire(target);
         }
 
     }
@@ -150,8 +150,11 @@ public class PlayerShip extends Ship {
     }
 
     private void onFirePressed() {
-        // Reload the weapon instantly when the fire button is pressed down, it feels more responsive.
-        if (getWeapon() != null) getWeapon().instantReload();
+        // Reload the weapon(s) instantly when the fire button is pressed down, it feels more responsive.
+        // NOTE: Not very balanced if weapons are picked up
+        for (Weapon weapon : getWeapons()) {
+            weapon.instantReload();
+        }
     }
 
     @Override
