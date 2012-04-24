@@ -28,6 +28,7 @@ public class PlayerShip extends Ship {
     private double angle = 270;
     private final static double DEGREES_TO_RADIANS= 2*Math.PI/360;
     private double angVelosity=0;
+    private double velosity = 0;
     private double maxAngAcc=200;
     private double maxAngVel=100;
     private double angAcc =0;
@@ -49,6 +50,7 @@ public class PlayerShip extends Ship {
     public PlayerShip(Game game, Planet planet, Picture picture) {
         super(game, 3);
         this.picture = picture;
+        // the distance from planet senter
         distance = planet.getRadius()+Game.PLAYER_FLIGHT_HEIGHT;
         this.planet = planet;
         pos().setX(planet.pos().x());
@@ -57,7 +59,7 @@ public class PlayerShip extends Ship {
     }
 
     @Override
-    protected void onUpdate(double durationSeconds) {
+        protected void onUpdate(double durationSeconds) {
         angVelosity += angAcc * durationSeconds;
         angVelosity *= Math.max(0, 1.0 - angSlow * durationSeconds);
 
@@ -80,6 +82,8 @@ public class PlayerShip extends Ship {
         if (firePressed && isReadyToFire()) {
             fire(target);
         }
+
+        velosity = angVelosity*distance;
 
     }
 
