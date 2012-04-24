@@ -83,8 +83,12 @@ public class PlayerShip extends Ship {
             fire(target);
         }
 
-        velosity = angVelosity*distance;
-
+        // Calculate player velocity vector
+        velosity = angVelosity*DEGREES_TO_RADIANS*distance;
+        velocity().set(pos());
+        velocity().setMinus(planet.pos());
+        velocity().setNormalized();
+        velocity().set(-velosity * velocity().y(), velosity * velocity().x(), 0);
     }
 
     public void resetAtLevelStart() {

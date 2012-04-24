@@ -36,7 +36,7 @@ public class Game extends GameBase {
     private MessageScreenFacet messageScreen = null;
     private GameStateManager gameStateManager = null;
 
-    private final TrackingCamera trackingCamera = new TrackingCamera(null, 0, 3);
+    private final TrackingCamera trackingCamera = new TrackingCamera(null, 0.5, 3);
     private final double minCameraScale = 0.2;
     private final double maxCameraScale = 0.6;
 
@@ -242,7 +242,7 @@ public class Game extends GameBase {
         // Create players ship
         player = new PlayerShip(this, planet, this.pictureStore().get("images/playership.png", 2.0));
         inputHandler().addListener(player);
-        Weapon standardWeapon = new Weapon(planet, playerBulletGroup, 0.07, 15, 800, Color.CYAN, 10, 0, 500, 25);
+        Weapon standardWeapon = new Weapon(planet, playerBulletGroup, 0.075, 15, 1200, Color.CYAN, 10, 0, 300, 25);
         //Weapon radnWEap = CampaignFactory.createWeapon(this, playerBulletGroup, random, 0.5, 0.5, 0);
         player.addWeapon(standardWeapon);
         player.setMaxHitPoints(300);
