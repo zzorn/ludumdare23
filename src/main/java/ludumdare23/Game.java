@@ -208,8 +208,8 @@ public class Game extends GameBase {
         // Create planet
         planet = new Planet(this, random);
 
-        planet.setMaxHitPoints(4000);
-        planet.setHitPoints(4000);
+        planet.setMaxHitPoints(levelNum * 1200);
+        planet.setHitPoints(levelNum * 1200);
         planetGroup.add(planet);
         hudFacet.setPlanet(planet);
 
@@ -242,7 +242,7 @@ public class Game extends GameBase {
         // Create players ship
         player = new PlayerShip(this, planet, this.pictureStore().get("images/playership.png", 2.0));
         inputHandler().addListener(player);
-        Weapon standardWeapon = new Weapon(planet, playerBulletGroup, 0.075, 15, 1200, Color.CYAN, 10, 0, 300, 25);
+        Weapon standardWeapon = new Weapon(planet, playerBulletGroup, 0.075, 15, 1600, new Color(0, 203, 255), 10, 0, 300, 25);
         //Weapon radnWEap = CampaignFactory.createWeapon(this, playerBulletGroup, random, 0.5, 0.5, 0);
         player.addWeapon(standardWeapon);
         player.setMaxHitPoints(300);
@@ -259,20 +259,28 @@ public class Game extends GameBase {
         for (int i = 0; i < (int)(0.7*number); i++) {
             // Player shooters
             enemyGroup.add(createEnemy(planet, player, "images/enemyship2.png", 400, 10,
-                    createWeapon(planet, 0.1, 10.0, 800.0, new Color(255, 195, 0), 8, 2, 5), 2.0, 50));
+                    createWeapon(planet, 0.1, 10.0, 800.0, new Color(255, 33, 0), 8, 2, 5), 2.0, 50));
         }
         for (int i = 0; i < (int)(0.3*number); i++) {
             // Planet shooters
             enemyGroup.add(createEnemy(planet, planet, "images/enemyship1.png", 500, 2,
-                    createWeapon(planet, 5, 15.0, 200.0, new Color(255, 131, 0), 1, 0, 30), 2.0, 100));
+                    createWeapon(planet, 5, 15.0, 200.0, new Color(255, 81, 0), 1, 0, 30), 2.0, 100));
         }
         if (level >= 3) for (int i = 0; i < (int)(0.2*number); i++) {
             enemyGroup.add(createEnemy(planet, player, "images/enemyship4.png", 700, 1,
-                    createWeapon(planet, 0.05, 12.0, 1200.0, new Color(255, 200, 0), 10, 3, 5), 2.0, 200));
+                    createWeapon(planet, 0.05, 12.0, 1200.0, new Color(255, 0, 74), 10, 3, 5), 2.0, 200));
+        }
+        if (level >= 9) for (int i = 0; i < (int)(0.15*number); i++) {
+            enemyGroup.add(createEnemy(planet, player, "images/enemyship3.png", 700, 1,
+                    createWeapon(planet, 0.1, 10.0, 50.0, new Color(255, 0, 167), 1, 5, 10), 2.0, 25));
         }
         if (level >= 5) for (int i = 0; i < (int)(0.05*number); i++) {
             enemyGroup.add(createEnemy(planet, planet, "images/mothership1.png", 1000, 1,
-                    createWeapon(planet, 1, 30.0, 1000.0, new Color(255, 255, 0), 3, 5, 50), 8.0, 400));
+                    createWeapon(planet, 1, 30.0, 1000.0, new Color(255, 0, 111), 3, 5, 50), 8.0, 500));
+        }
+        if (level >= 7) for (int i = 0; i < (int)(0.05*number); i++) {
+            enemyGroup.add(createEnemy(planet, player, "images/carriership.png", 1000, 1,
+                    createWeapon(planet, 0.01, 20.0, 2000.0, new Color(255, 0, 233), 30, 10, 10), 8.0, 800));
         }
     }
     
